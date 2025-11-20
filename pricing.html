@@ -4,20 +4,26 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Pricing - RoverAI</title>
+    <title>Pricing - DocuCV</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link
-        href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700;900&family=Inter:wght@300;400;600&display=swap"
+        href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;700;900&family=Inter:wght@300;400;500;600&display=swap"
         rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+
     <script>
         tailwind.config = {
             theme: {
                 extend: {
                     fontFamily: { sans: ['Inter', 'sans-serif'], display: ['Outfit', 'sans-serif'] },
                     colors: {
-                        space: { 950: '#05050a', 900: '#0b0c15', 800: '#151725', 700: '#1f2235' },
+                        space: { 950: '#030305', 900: '#0A0A0F', 800: '#12121A', 700: '#1C1C26' },
                         accent: { 400: '#818cf8', 500: '#6366f1', 600: '#4f46e5' }
+                    },
+                    backgroundImage: {
+                        'nebula': 'radial-gradient(circle at 50% -20%, #2e1065 0%, #030305 45%)',
+                        'grid': "url('https://grainy-gradients.vercel.app/noise.svg')"
                     }
                 }
             }
@@ -25,96 +31,143 @@
     </script>
     <style>
         body {
-            background-color: #05050a;
+            background-color: #030305;
             color: #e2e8f0;
+        }
+
+        .glass {
+            background: rgba(255, 255, 255, 0.03);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .glass:hover {
+            border-color: rgba(99, 102, 241, 0.3);
+            background: rgba(255, 255, 255, 0.05);
         }
     </style>
 </head>
 
-<body>
+<body class="min-h-screen flex flex-col">
 
     <!-- NAVBAR -->
     <nav class="fixed w-full z-50 bg-space-950/80 backdrop-blur-md border-b border-white/5">
         <div class="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between">
-            <a href="/" class="flex items-center gap-2">
-                <i class="fa-solid fa-rocket text-accent-500 text-2xl"></i>
-                <span class="font-display font-bold text-xl tracking-wide text-white">Rover<span
-                        class="text-accent-500">AI</span></span>
+            <a href="/" class="flex items-center gap-2 group">
+                <div
+                    class="w-8 h-8 bg-accent-600 rounded-lg flex items-center justify-center text-white group-hover:rotate-12 transition">
+                    <i class="fa-solid fa-file-lines"></i>
+                </div>
+                <span class="font-display font-bold text-xl tracking-wide text-white">Docu<span
+                        class="text-accent-500">CV</span></span>
             </a>
-            <div class="hidden md:flex items-center gap-8 text-sm font-medium text-gray-400">
+            <div class="flex items-center gap-6 text-sm font-medium text-gray-400">
                 <a href="/" class="hover:text-white transition">Home</a>
                 <a href="login.html" class="text-white hover:text-accent-400 transition">Log In</a>
-                <a href="app.html"
-                    class="bg-accent-600 hover:bg-accent-500 text-white px-5 py-2.5 rounded-full transition">Get
-                    Started</a>
             </div>
         </div>
     </nav>
 
-    <!-- PRICING -->
-    <section class="pt-32 pb-20">
-        <div class="max-w-7xl mx-auto px-6 text-center">
-            <h1 class="font-display font-bold text-4xl md:text-6xl mb-6">Simple, Transparent Pricing</h1>
-            <p class="text-gray-400 text-lg mb-16">Invest in your career for less than the cost of a lunch.</p>
+    <main class="flex-1 pt-32 pb-20 relative overflow-hidden">
+        <div class="absolute inset-0 bg-nebula z-0"></div>
+        <div class="absolute inset-0 opacity-20 bg-grid z-0"></div>
 
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-5xl mx-auto">
+        <div class="relative z-10 max-w-7xl mx-auto px-6">
+            <div class="text-center max-w-3xl mx-auto mb-20">
+                <h1 class="font-display font-black text-5xl text-white mb-6">Invest in your career.</h1>
+                <p class="text-xl text-gray-400">Simple pricing. No hidden fees. Cancel anytime.</p>
+            </div>
 
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-6xl mx-auto">
                 <!-- Free Tier -->
-                <div class="bg-space-900 border border-gray-800 rounded-2xl p-8 flex flex-col">
-                    <h3 class="text-xl font-bold text-white mb-2">Starter</h3>
-                    <div class="text-4xl font-bold text-white mb-6">$0</div>
-                    <ul class="space-y-4 text-left text-sm text-gray-400 mb-8 flex-1">
-                        <li class="flex gap-3"><i class="fa-solid fa-check text-green-400"></i> 1 Resume Download</li>
-                        <li class="flex gap-3"><i class="fa-solid fa-check text-green-400"></i> Basic Templates</li>
-                        <li class="flex gap-3"><i class="fa-solid fa-check text-green-400"></i> 1 ATS Check / Day</li>
+                <div class="glass p-8 rounded-3xl flex flex-col relative">
+                    <div class="mb-8">
+                        <h3 class="font-bold text-white text-xl mb-2">Starter</h3>
+                        <p class="text-gray-400 text-sm">Perfect for trying out the platform.</p>
+                    </div>
+                    <div class="mb-8">
+                        <span class="text-4xl font-bold text-white">$0</span>
+                        <span class="text-gray-500">/month</span>
+                    </div>
+                    <ul class="space-y-4 mb-8 flex-1">
+                        <li class="flex items-center gap-3 text-sm text-gray-300"><i
+                                class="fa-solid fa-check text-green-500"></i> 1 Resume</li>
+                        <li class="flex items-center gap-3 text-sm text-gray-300"><i
+                                class="fa-solid fa-check text-green-500"></i> Basic Templates</li>
+                        <li class="flex items-center gap-3 text-sm text-gray-300"><i
+                                class="fa-solid fa-check text-green-500"></i> PDF Download (Watermarked)</li>
+                        <li class="flex items-center gap-3 text-sm text-gray-500"><i class="fa-solid fa-xmark"></i> AI
+                            Writer</li>
+                        <li class="flex items-center gap-3 text-sm text-gray-500"><i class="fa-solid fa-xmark"></i> ATS
+                            Scanner</li>
                     </ul>
-                    <a href="app.html"
-                        class="w-full py-3 rounded-xl border border-gray-700 hover:bg-gray-800 transition text-white font-bold">Start
-                        Free</a>
+                    <a href="login.html"
+                        class="w-full py-3 rounded-xl border border-gray-700 text-white font-bold text-center hover:bg-white/5 transition">Get
+                        Started</a>
                 </div>
 
                 <!-- Pro Tier -->
                 <div
-                    class="bg-space-800 border border-accent-500 rounded-2xl p-8 flex flex-col transform scale-105 shadow-2xl shadow-accent-500/20 relative">
+                    class="glass p-8 rounded-3xl flex flex-col relative border-accent-500/50 bg-accent-500/5 transform scale-105 shadow-2xl shadow-accent-500/20">
                     <div
                         class="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-accent-600 text-white text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wide">
                         Most Popular</div>
-                    <h3 class="text-xl font-bold text-white mb-2">Pro</h3>
-                    <div class="text-4xl font-bold text-white mb-6">$9<span
-                            class="text-lg text-gray-500 font-normal">/mo</span></div>
-                    <ul class="space-y-4 text-left text-sm text-gray-300 mb-8 flex-1">
-                        <li class="flex gap-3"><i class="fa-solid fa-check text-accent-400"></i> Unlimited Downloads
-                        </li>
-                        <li class="flex gap-3"><i class="fa-solid fa-check text-accent-400"></i> All Premium Templates
-                        </li>
-                        <li class="flex gap-3"><i class="fa-solid fa-check text-accent-400"></i> Unlimited ATS Checks
-                        </li>
-                        <li class="flex gap-3"><i class="fa-solid fa-check text-accent-400"></i> AI Cover Letter Gen
-                        </li>
+                    <div class="mb-8">
+                        <h3 class="font-bold text-white text-xl mb-2">Pro</h3>
+                        <p class="text-gray-400 text-sm">Everything you need to get hired.</p>
+                    </div>
+                    <div class="mb-8">
+                        <span class="text-4xl font-bold text-white">$19</span>
+                        <span class="text-gray-500">/month</span>
+                    </div>
+                    <ul class="space-y-4 mb-8 flex-1">
+                        <li class="flex items-center gap-3 text-sm text-white"><i
+                                class="fa-solid fa-check text-accent-400"></i> Unlimited Resumes</li>
+                        <li class="flex items-center gap-3 text-sm text-white"><i
+                                class="fa-solid fa-check text-accent-400"></i> All Premium Templates</li>
+                        <li class="flex items-center gap-3 text-sm text-white"><i
+                                class="fa-solid fa-check text-accent-400"></i> No Watermarks</li>
+                        <li class="flex items-center gap-3 text-sm text-white"><i
+                                class="fa-solid fa-check text-accent-400"></i> AI Writer (GPT-4)</li>
+                        <li class="flex items-center gap-3 text-sm text-white"><i
+                                class="fa-solid fa-check text-accent-400"></i> ATS Scanner (50/mo)</li>
                     </ul>
-                    <a href="app.html"
-                        class="w-full py-3 rounded-xl bg-accent-600 hover:bg-accent-500 transition text-white font-bold">Get
-                        Pro</a>
+                    <a href="login.html"
+                        class="w-full py-3 rounded-xl bg-accent-600 text-white font-bold text-center hover:bg-accent-500 transition shadow-lg shadow-accent-500/25">Start
+                        Free Trial</a>
                 </div>
 
                 <!-- Lifetime Tier -->
-                <div class="bg-space-900 border border-gray-800 rounded-2xl p-8 flex flex-col">
-                    <h3 class="text-xl font-bold text-white mb-2">Lifetime</h3>
-                    <div class="text-4xl font-bold text-white mb-6">$49</div>
-                    <ul class="space-y-4 text-left text-sm text-gray-400 mb-8 flex-1">
-                        <li class="flex gap-3"><i class="fa-solid fa-check text-green-400"></i> One-time payment</li>
-                        <li class="flex gap-3"><i class="fa-solid fa-check text-green-400"></i> All Pro Features</li>
-                        <li class="flex gap-3"><i class="fa-solid fa-check text-green-400"></i> Future Updates Included
-                        </li>
+                <div class="glass p-8 rounded-3xl flex flex-col relative">
+                    <div class="mb-8">
+                        <h3 class="font-bold text-white text-xl mb-2">Lifetime</h3>
+                        <p class="text-gray-400 text-sm">Pay once, own it forever.</p>
+                    </div>
+                    <div class="mb-8">
+                        <span class="text-4xl font-bold text-white">$99</span>
+                        <span class="text-gray-500">/one-time</span>
+                    </div>
+                    <ul class="space-y-4 mb-8 flex-1">
+                        <li class="flex items-center gap-3 text-sm text-gray-300"><i
+                                class="fa-solid fa-check text-green-500"></i> All Pro Features</li>
+                        <li class="flex items-center gap-3 text-sm text-gray-300"><i
+                                class="fa-solid fa-check text-green-500"></i> Lifetime Updates</li>
+                        <li class="flex items-center gap-3 text-sm text-gray-300"><i
+                                class="fa-solid fa-check text-green-500"></i> Priority Support</li>
+                        <li class="flex items-center gap-3 text-sm text-gray-300"><i
+                                class="fa-solid fa-check text-green-500"></i> Early Access to New Features</li>
                     </ul>
-                    <a href="app.html"
-                        class="w-full py-3 rounded-xl border border-gray-700 hover:bg-gray-800 transition text-white font-bold">Buy
-                        Once</a>
+                    <a href="login.html"
+                        class="w-full py-3 rounded-xl border border-gray-700 text-white font-bold text-center hover:bg-white/5 transition">Buy
+                        Lifetime</a>
                 </div>
-
             </div>
         </div>
-    </section>
+    </main>
+
+    <footer class="bg-space-900 border-t border-white/5 py-10 text-center">
+        <p class="text-gray-600 text-sm">&copy; 2024 DocuCV Inc. All rights reserved.</p>
+    </footer>
 
 </body>
 

@@ -296,6 +296,6 @@ app.post('/api/ats-check', upload.single('resume'), async (req, res) => {
 });
 
 app.listen(PORT, () => {
-    console.log(`\n🚀 ROVER AI SERVER STARTED`);
+    console.log(`\n🚀 DOCUCV SERVER STARTED`);
     console.log(`👉 http://localhost:${PORT}\n`);
 });

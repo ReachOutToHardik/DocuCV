@@ -4,25 +4,27 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>RoverAI Dashboard</title>
+    <title>DocuCV Dashboard</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link
-        href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700;900&family=Inter:wght@300;400;600&display=swap"
+        href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;700;900&family=Inter:wght@300;400;500;600&display=swap"
         rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
     <script>
         tailwind.config = {
             theme: {
                 extend: {
                     fontFamily: { sans: ['Inter', 'sans-serif'], display: ['Outfit', 'sans-serif'] },
                     colors: {
-                        space: { 950: '#05050a', 900: '#0b0c15', 800: '#151725', 700: '#1f2235' },
-                        accent: { 400: '#818cf8', 500: '#6366f1', 600: '#4f46e5', glow: '#a5b4fc' }
+                        space: { 950: '#030305', 900: '#0A0A0F', 800: '#12121A', 700: '#1C1C26' },
+                        accent: { 400: '#818cf8', 500: '#6366f1', 600: '#4f46e5' }
                     },
                     backgroundImage: {
-                        'nebula': 'radial-gradient(circle at 50% 0%, #2e1065 0%, #0b0c15 60%)',
+                        'nebula': 'radial-gradient(circle at 50% -20%, #2e1065 0%, #030305 45%)',
+                        'grid': "url('https://grainy-gradients.vercel.app/noise.svg')"
                     }
                 }
             }
@@ -30,311 +32,292 @@
     </script>
     <style>
         body {
-            background-color: #05050a;
+            background-color: #030305;
             color: #e2e8f0;
         }
 
-        .glass-panel {
-            background: rgba(21, 23, 37, 0.7);
-            backdrop-filter: blur(12px);
-            border: 1px solid rgba(255, 255, 255, 0.08);
+        .glass {
+            background: rgba(255, 255, 255, 0.03);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.05);
         }
 
-        .glass-sidebar {
-            background: rgba(11, 12, 21, 0.9);
-            backdrop-filter: blur(12px);
-            border-right: 1px solid rgba(255, 255, 255, 0.05);
+        .glass:hover {
+            border-color: rgba(99, 102, 241, 0.3);
+            background: rgba(255, 255, 255, 0.05);
         }
 
         /* Custom Scrollbar */
         ::-webkit-scrollbar {
-            width: 6px;
+            width: 8px;
+            height: 8px;
         }
 
         ::-webkit-scrollbar-track {
-            background: #05050a;
+            background: #0A0A0F;
         }
 
         ::-webkit-scrollbar-thumb {
-            background: #333;
-            border-radius: 3px;
+            background: #1C1C26;
+            border-radius: 4px;
         }
 
         ::-webkit-scrollbar-thumb:hover {
-            background: #4f46e5;
-        }
-
-        [x-cloak] {
-            display: none !important;
+            background: #2d3748;
         }
     </style>
 </head>
 
-<body class="h-screen flex overflow-hidden text-sm" x-data="app()" x-init="initApp()" x-cloak>
+<body x-data="app()" x-init="initApp()" class="h-screen flex overflow-hidden">
 
     <!-- SIDEBAR -->
-    <aside class="w-64 glass-sidebar flex flex-col justify-between z-20 flex-shrink-0">
-        <div>
-            <div class="p-6 flex items-center gap-3 border-b border-white/5">
-                <i class="fa-solid fa-rocket text-accent-500 text-xl"></i>
-                <span class="font-display font-bold text-lg tracking-wide text-white">Rover<span
-                        class="text-accent-500">AI</span></span>
+    <aside class="w-64 bg-space-900 border-r border-white/5 flex flex-col">
+        <div class="p-6 flex items-center gap-3">
+            <div class="w-8 h-8 bg-accent-600 rounded-lg flex items-center justify-center text-white">
+                <i class="fa-solid fa-file-lines"></i>
             </div>
-
-            <nav class="mt-6 px-3 space-y-1">
-                <template x-for="(item, index) in navItems" :key:="index">
-                    <div @click="currentStep = item.step"
-                        :class="currentStep === item.step ? 'bg-accent-600/10 text-white border-accent-500' : 'text-gray-400 border-transparent hover:text-white hover:bg-white/5'"
-                        class="p-3 rounded-lg border-l-2 cursor-pointer flex items-center gap-3 transition group">
-                        <div :class="currentStep === item.step ? 'bg-accent-500 text-white' : 'bg-space-700 text-gray-400 group-hover:text-white'"
-                            class="w-6 h-6 rounded-md flex items-center justify-center text-xs font-bold transition">
-                            <span x-text="item.step"></span>
-                        </div>
-                        <span class="font-medium" x-text="item.label"></span>
-                    </div>
-                </template>
-            </nav>
+            <span class="font-display font-bold text-xl tracking-wide text-white">Docu<span
+                    class="text-accent-500">CV</span></span>
         </div>
 
-        <div class="p-4 border-t border-white/5 bg-space-900/50">
-            <!-- User Profile -->
-            <div class="flex items-center gap-3 mb-4">
-                <div
-                    class="w-8 h-8 rounded-full bg-gradient-to-br from-accent-500 to-purple-600 flex items-center justify-center text-white font-bold shadow-lg shadow-accent-500/20">
-                    <span x-text="user ? user.email[0].toUpperCase() : 'G'"></span>
+        <nav class="flex-1 px-4 space-y-2 mt-4">
+            <a href="#" @click.prevent="currentTab = 'builder'"
+                :class="currentTab === 'builder' ? 'bg-accent-500/10 text-accent-400 border-accent-500/20' : 'text-gray-400 hover:bg-white/5 hover:text-white border-transparent'"
+                class="flex items-center gap-3 px-4 py-3 rounded-xl border transition font-medium">
+                <i class="fa-solid fa-wand-magic-sparkles w-5"></i> Builder
+            </a>
+            <a href="#" @click.prevent="currentTab = 'ats'"
+                :class="currentTab === 'ats' ? 'bg-accent-500/10 text-accent-400 border-accent-500/20' : 'text-gray-400 hover:bg-white/5 hover:text-white border-transparent'"
+                class="flex items-center gap-3 px-4 py-3 rounded-xl border transition font-medium">
+                <i class="fa-solid fa-bullseye w-5"></i> ATS Scanner
+            </a>
+            <a href="#" @click.prevent="currentTab = 'templates'"
+                :class="currentTab === 'templates' ? 'bg-accent-500/10 text-accent-400 border-accent-500/20' : 'text-gray-400 hover:bg-white/5 hover:text-white border-transparent'"
+                class="flex items-center gap-3 px-4 py-3 rounded-xl border transition font-medium">
+                <i class="fa-solid fa-layer-group w-5"></i> Templates
+            </a>
+        </nav>
+
+        <div class="p-4 border-t border-white/5">
+            <div class="glass rounded-xl p-4 mb-4">
+                <div class="flex justify-between items-center mb-2">
+                    <span class="text-xs font-bold text-gray-400 uppercase">Credits</span>
+                    <span class="text-xs font-bold text-white" x-text="user ? user.credits + ' left' : '...'"></span>
                 </div>
-                <div class="flex-1 overflow-hidden">
-                    <p class="text-white font-bold truncate" x-text="user ? user.email : 'Guest'"></p>
-                    <p class="text-[10px] text-accent-400 uppercase font-bold tracking-wider">Free Plan</p>
+                <div class="w-full bg-space-950 rounded-full h-1.5">
+                    <div class="bg-accent-500 h-1.5 rounded-full"
+                        :style="'width: ' + (user ? user.credits / 5 * 100 : 0) + '%'">
+                    </div>
                 </div>
-                <button @click="logout()" class="text-gray-500 hover:text-red-400 transition"><i
-                        class="fa-solid fa-power-off"></i></button>
+                <a href="pricing.html"
+                    class="block mt-3 text-center text-xs text-accent-400 hover:text-white transition font-bold">Upgrade
+                    to Pro</a>
             </div>
 
-            <!-- API Key Input -->
-            <div class="relative">
-                <input type="password" x-model="apiKey" placeholder="Gemini API Key"
-                    class="w-full bg-space-950 border border-gray-700 rounded p-2 text-xs text-white focus:border-accent-500 outline-none pl-8">
-                <i class="fa-solid fa-key absolute left-2.5 top-2.5 text-gray-600 text-xs"></i>
+            <div class="flex items-center gap-3 px-2" x-show="user">
+                <div class="w-8 h-8 rounded-full bg-gradient-to-br from-accent-500 to-purple-600 flex items-center justify-center text-white font-bold text-xs"
+                    x-text="getInitials()"></div>
+                <div class="flex-1 min-w-0">
+                    <p class="text-sm font-bold text-white truncate" x-text="user.full_name || 'User'"></p>
+                    <p class="text-xs text-gray-500 truncate" x-text="user.email"></p>
+                </div>
+                <button @click="logout()" class="text-gray-500 hover:text-white transition"><i
+                        class="fa-solid fa-right-from-bracket"></i></button>
             </div>
         </div>
     </aside>
 
     <!-- MAIN CONTENT -->
-    <main class="flex-1 flex flex-col relative bg-space-950 overflow-hidden">
-        <!-- Background Ambient -->
-        <div class="absolute top-0 left-0 w-full h-full bg-nebula opacity-50 pointer-events-none"></div>
-
+    <main class="flex-1 flex flex-col relative overflow-hidden">
         <!-- Header -->
         <header
-            class="h-16 border-b border-white/5 flex items-center justify-between px-8 relative z-10 bg-space-950/50 backdrop-blur-sm">
-            <h2 class="text-lg font-display font-bold text-white" x-text="pageTitle"></h2>
-
-            <div class="flex gap-3">
-                <button x-show="currentStep > 1" @click="currentStep--"
-                    class="px-4 py-2 rounded-lg border border-gray-700 text-gray-300 hover:text-white hover:border-gray-500 transition text-xs font-bold">
-                    Back
-                </button>
-                <button x-show="currentStep < 4" @click="currentStep++"
-                    class="px-4 py-2 rounded-lg bg-accent-600 hover:bg-accent-500 text-white text-xs font-bold shadow-lg shadow-accent-500/20 transition flex items-center gap-2">
-                    Next Step <i class="fa-solid fa-arrow-right"></i>
-                </button>
+            class="h-16 border-b border-white/5 flex items-center justify-between px-8 bg-space-950/50 backdrop-blur-sm z-10">
+            <h1 class="font-display font-bold text-xl text-white" x-text="tabTitle"></h1>
+            <div class="flex items-center gap-4">
+                <input type="password" x-model="apiKey" placeholder="Gemini API Key"
+                    class="bg-space-800 border border-white/10 rounded-lg px-3 py-1 text-sm text-white focus:outline-none focus:border-accent-500">
+                <button
+                    class="w-8 h-8 rounded-full bg-space-800 flex items-center justify-center text-gray-400 hover:text-white transition"><i
+                        class="fa-regular fa-bell"></i></button>
             </div>
         </header>
 
         <!-- Scrollable Area -->
-        <div class="flex-1 overflow-y-auto p-8 relative z-10">
+        <div class="flex-1 overflow-y-auto p-8 relative">
+            <div class="absolute inset-0 bg-nebula z-0 pointer-events-none"></div>
+            <div class="absolute inset-0 opacity-20 bg-grid z-0 pointer-events-none"></div>
 
-            <!-- STEP 1: PROFILE -->
-            <div x-show="currentStep === 1" class="max-w-3xl mx-auto space-y-6"
-                x-transition:enter="transition ease-out duration-300" x-transition:enter-start="opacity-0 translate-y-4"
-                x-transition:enter-end="opacity-100 translate-y-0">
-                <div class="glass-panel p-8 rounded-2xl">
-                    <div class="flex items-center gap-6 mb-8">
-                        <div class="relative group cursor-pointer" @click="$refs.fileInput.click()">
-                            <div
-                                class="w-24 h-24 rounded-full bg-space-800 border-2 border-gray-700 flex items-center justify-center overflow-hidden group-hover:border-accent-500 transition">
-                                <img x-show="profileImage" :src="profileImage" class="w-full h-full object-cover">
-                                <i x-show="!profileImage"
-                                    class="fa-solid fa-camera text-gray-600 text-2xl group-hover:text-accent-500 transition"></i>
-                            </div>
-                            <div
-                                class="absolute bottom-0 right-0 w-8 h-8 bg-accent-600 rounded-full flex items-center justify-center border-2 border-space-900 text-white text-xs">
-                                <i class="fa-solid fa-plus"></i>
-                            </div>
-                        </div>
-                        <input type="file" x-ref="fileInput" class="hidden" accept="image/*"
-                            @change="handleImage($event)">
-
+            <!-- BUILDER TAB -->
+            <div x-show="currentTab === 'builder'" class="max-w-4xl mx-auto relative z-10">
+                <div class="glass p-8 rounded-2xl mb-8">
+                    <h2 class="text-2xl font-display font-bold text-white mb-6">Personal Details</h2>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                         <div>
-                            <h3 class="text-xl font-bold text-white">Personal Details</h3>
-                            <p class="text-gray-400 text-xs">This info will appear at the top of your resume.</p>
-                        </div>
-                    </div>
-
-                    <div class="grid grid-cols-2 gap-6">
-                        <div class="col-span-2">
-                            <label class="block text-xs text-gray-500 uppercase font-bold mb-1">Full Name</label>
+                            <label class="block text-xs font-medium text-gray-400 mb-1">Full Name</label>
                             <input type="text" x-model="formData.name"
-                                class="w-full bg-space-950 border border-gray-700 rounded-lg p-3 text-white focus:border-accent-500 outline-none transition focus:ring-1 focus:ring-accent-500">
+                                class="w-full bg-space-950 border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-accent-500 transition">
                         </div>
                         <div>
-                            <label class="block text-xs text-gray-500 uppercase font-bold mb-1">Email</label>
+                            <label class="block text-xs font-medium text-gray-400 mb-1">Email</label>
                             <input type="email" x-model="formData.email"
-                                class="w-full bg-space-950 border border-gray-700 rounded-lg p-3 text-white focus:border-accent-500 outline-none transition">
+                                class="w-full bg-space-950 border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-accent-500 transition">
                         </div>
                         <div>
-                            <label class="block text-xs text-gray-500 uppercase font-bold mb-1">Phone</label>
+                            <label class="block text-xs font-medium text-gray-400 mb-1">Phone</label>
                             <input type="text" x-model="formData.phone"
-                                class="w-full bg-space-950 border border-gray-700 rounded-lg p-3 text-white focus:border-accent-500 outline-none transition">
+                                class="w-full bg-space-950 border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-accent-500 transition">
                         </div>
                         <div>
-                            <label class="block text-xs text-gray-500 uppercase font-bold mb-1">LinkedIn URL</label>
+                            <label class="block text-xs font-medium text-gray-400 mb-1">Target Role</label>
+                            <input type="text" x-model="formData.targetRole"
+                                class="w-full bg-space-950 border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-accent-500 transition">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-medium text-gray-400 mb-1">LinkedIn</label>
                             <input type="text" x-model="formData.linkedin"
-                                class="w-full bg-space-950 border border-gray-700 rounded-lg p-3 text-white focus:border-accent-500 outline-none transition">
+                                class="w-full bg-space-950 border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-accent-500 transition">
                         </div>
                         <div>
-                            <label class="block text-xs text-gray-500 uppercase font-bold mb-1">GitHub /
-                                Portfolio</label>
+                            <label class="block text-xs font-medium text-gray-400 mb-1">GitHub / Portfolio</label>
                             <input type="text" x-model="formData.github"
-                                class="w-full bg-space-950 border border-gray-700 rounded-lg p-3 text-white focus:border-accent-500 outline-none transition">
+                                class="w-full bg-space-950 border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-accent-500 transition">
+                        </div>
+                        <div class="md:col-span-2">
+                            <label class="block text-xs font-medium text-gray-400 mb-1">Profile Picture</label>
+                            <input type="file" @change="handleImage" accept="image/*"
+                                class="w-full bg-space-950 border border-white/10 rounded-xl px-4 py-3 text-gray-400 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-xs file:font-semibold file:bg-accent-500/10 file:text-accent-400 hover:file:bg-accent-500/20">
                         </div>
                     </div>
                 </div>
-            </div>
 
-            <!-- STEP 2: EXPERIENCE -->
-            <div x-show="currentStep === 2" class="max-w-3xl mx-auto space-y-6"
-                x-transition:enter="transition ease-out duration-300" x-transition:enter-start="opacity-0 translate-y-4"
-                x-transition:enter-end="opacity-100 translate-y-0">
-                <div class="glass-panel p-8 rounded-2xl">
-                    <div class="mb-6">
-                        <label class="block text-xs text-gray-500 uppercase font-bold mb-1">Target Job Title</label>
-                        <input type="text" x-model="formData.targetRole" placeholder="e.g. Senior Frontend Engineer"
-                            class="w-full bg-space-950 border border-gray-700 rounded-lg p-3 text-white focus:border-accent-500 outline-none transition">
-                    </div>
+                <div class="glass p-8 rounded-2xl mb-8">
+                    <h2 class="text-2xl font-display font-bold text-white mb-6">Experience Dump</h2>
+                    <p class="text-gray-400 text-sm mb-4">Paste your raw resume or rough notes here. Our AI will
+                        structure it, quantify results, and format it perfectly.</p>
+                    <textarea x-model="formData.rawInfo" rows="10"
+                        class="w-full bg-space-950 border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-accent-500 transition"
+                        placeholder="e.g. Worked at Google from 2020-2022 as Software Engineer. Built a scalable API..."></textarea>
+                </div>
 
-                    <div>
-                        <div class="flex justify-between items-end mb-2">
-                            <label class="block text-xs text-gray-500 uppercase font-bold">Brain Dump</label>
-                            <span
-                                class="text-[10px] text-accent-400 bg-accent-500/10 px-2 py-1 rounded border border-accent-500/20">AI
-                                Will Format This</span>
-                        </div>
-                        <textarea x-model="formData.rawInfo" rows="15"
-                            placeholder="Paste your old resume, LinkedIn bio, or just type out your history loosely. Our AI will structure it perfectly."
-                            class="w-full bg-space-950 border border-gray-700 rounded-lg p-4 text-white focus:border-accent-500 outline-none transition leading-relaxed resize-none"></textarea>
-                    </div>
+                <div class="flex justify-end">
+                    <button @click="generateResume()" :disabled="generating"
+                        class="bg-accent-600 hover:bg-accent-500 text-white font-bold py-4 px-8 rounded-xl shadow-lg shadow-accent-500/25 transition flex items-center gap-3 disabled:opacity-50 disabled:cursor-not-allowed">
+                        <i class="fa-solid fa-wand-magic-sparkles" :class="{'fa-spin': generating}"></i>
+                        <span x-text="generating ? 'Generating Magic...' : 'Generate Resume'"></span>
+                    </button>
                 </div>
             </div>
 
-            <!-- STEP 3: TEMPLATES -->
-            <div x-show="currentStep === 3" class="max-w-6xl mx-auto"
-                x-transition:enter="transition ease-out duration-300" x-transition:enter-start="opacity-0 translate-y-4"
-                x-transition:enter-end="opacity-100 translate-y-0">
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-                    <template x-for="template in templates" :key="template.path">
-                        <div @click="selectedTemplate = template.path"
-                            :class="selectedTemplate === template.path ? 'border-accent-500 ring-2 ring-accent-500/20' : 'border-transparent hover:border-gray-600'"
-                            class="glass-panel rounded-xl overflow-hidden cursor-pointer border transition group relative h-80 flex flex-col">
-
-                            <!-- Preview Image -->
-                            <div class="h-48 bg-space-900 overflow-hidden relative">
-                                <img x-show="template.img" :src="template.img"
-                                    class="w-full h-full object-cover object-top transition duration-700 group-hover:scale-110 opacity-80 group-hover:opacity-100">
-                                <div x-show="!template.img"
-                                    class="w-full h-full flex items-center justify-center text-gray-700"><i
-                                        class="fa-solid fa-file-pdf text-4xl"></i></div>
-
-                                <!-- Selection Indicator -->
-                                <div x-show="selectedTemplate === template.path"
-                                    class="absolute inset-0 bg-accent-600/20 flex items-center justify-center backdrop-blur-[2px]">
-                                    <div
-                                        class="w-10 h-10 rounded-full bg-accent-600 text-white flex items-center justify-center shadow-lg">
-                                        <i class="fa-solid fa-check"></i></div>
+            <!-- TEMPLATES TAB -->
+            <div x-show="currentTab === 'templates'" class="max-w-6xl mx-auto relative z-10">
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    <template x-for="t in templates" :key="t.path">
+                        <div class="glass rounded-2xl overflow-hidden group cursor-pointer border-2 transition"
+                            :class="selectedTemplate === t.path ? 'border-accent-500' : 'border-transparent hover:border-white/10'"
+                            @click="selectedTemplate = t.path">
+                            <div class="aspect-[3/4] bg-space-950 relative overflow-hidden">
+                                <img :src="t.img || 'https://via.placeholder.com/300x400/12121a/333?text=No+Preview'"
+                                    class="w-full h-full object-cover opacity-80 group-hover:opacity-100 transition duration-500 group-hover:scale-105">
+                                <div
+                                    class="absolute inset-0 bg-gradient-to-t from-space-950 via-transparent to-transparent opacity-80">
                                 </div>
-                            </div>
-
-                            <div class="p-4 flex-1 flex flex-col justify-between">
-                                <div>
-                                    <h3 class="font-bold text-white" x-text="template.name"></h3>
-                                    <p class="text-xs text-gray-400 mt-1 line-clamp-2" x-text="template.desc"></p>
+                                <div class="absolute bottom-0 left-0 p-6">
+                                    <h3 class="font-bold text-white text-lg" x-text="t.name"></h3>
+                                    <p class="text-xs text-gray-400" x-text="t.desc"></p>
                                 </div>
-                                <button
-                                    class="w-full mt-3 py-2 rounded bg-space-800 hover:bg-space-700 text-xs font-bold text-gray-300 transition">Preview</button>
+                                <div x-show="selectedTemplate === t.path"
+                                    class="absolute top-4 right-4 w-8 h-8 bg-accent-500 rounded-full flex items-center justify-center text-white shadow-lg">
+                                    <i class="fa-solid fa-check"></i>
+                                </div>
                             </div>
                         </div>
                     </template>
                 </div>
-
-                <!-- Generate Button -->
-                <div class="fixed bottom-8 right-8 z-50">
-                    <button @click="generateResume()" :disabled="!selectedTemplate || generating"
-                        class="px-8 py-4 rounded-full bg-gradient-to-r from-accent-600 to-purple-600 text-white font-bold text-lg shadow-2xl shadow-accent-500/40 hover:scale-105 transition transform disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-3">
-                        <span x-show="!generating"><i class="fa-solid fa-wand-magic-sparkles"></i> Generate
-                            Resume</span>
-                        <span x-show="generating"><i class="fa-solid fa-circle-notch fa-spin"></i> Building...</span>
-                    </button>
-                </div>
             </div>
 
-            <!-- STEP 4: ATS CHECKER -->
-            <div x-show="currentStep === 4" class="max-w-4xl mx-auto space-y-6"
-                x-transition:enter="transition ease-out duration-300" x-transition:enter-start="opacity-0 translate-y-4"
-                x-transition:enter-end="opacity-100 translate-y-0">
-                <div class="glass-panel p-8 rounded-2xl">
-                    <h3 class="text-xl font-bold text-white mb-6">ATS Compatibility Check</h3>
-
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-                        <div class="border-2 border-dashed border-gray-700 rounded-xl p-8 text-center hover:border-accent-500 transition cursor-pointer bg-space-900/30"
-                            @click="$refs.atsInput.click()">
-                            <i class="fa-solid fa-cloud-arrow-up text-4xl text-accent-500 mb-3"></i>
-                            <p class="text-sm text-gray-300 font-medium"
-                                x-text="atsFile ? atsFile.name : 'Upload Resume (PDF/DOCX)'"></p>
-                            <input type="file" x-ref="atsInput" class="hidden" accept=".pdf,.docx"
-                                @change="atsFile = $event.target.files[0]">
-                        </div>
-
-                        <textarea x-model="atsJobDesc" placeholder="Paste the Job Description here..."
-                            class="w-full bg-space-950 border border-gray-700 rounded-xl p-4 text-white focus:border-accent-500 outline-none transition text-xs leading-relaxed resize-none"></textarea>
+            <!-- ATS TAB -->
+            <div x-show="currentTab === 'ats'" class="max-w-4xl mx-auto relative z-10">
+                <div class="glass p-8 rounded-2xl mb-8">
+                    <h2 class="text-2xl font-display font-bold text-white mb-6">ATS Scanner</h2>
+                    <div class="mb-6">
+                        <label class="block text-xs font-medium text-gray-400 mb-1">Upload Resume (PDF/DOCX)</label>
+                        <input type="file" @change="atsFile = $event.target.files[0]"
+                            class="w-full bg-space-950 border border-white/10 rounded-xl px-4 py-3 text-gray-400 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-xs file:font-semibold file:bg-accent-500/10 file:text-accent-400 hover:file:bg-accent-500/20">
                     </div>
-
-                    <button @click="runAtsCheck()" :disabled="!atsFile || atsChecking"
-                        class="w-full mt-6 py-3 rounded-xl bg-space-800 hover:bg-space-700 text-white font-bold border border-gray-700 transition">
-                        <span x-show="!atsChecking">Run Analysis</span>
-                        <span x-show="atsChecking">Analyzing...</span>
+                    <div class="mb-6">
+                        <label class="block text-xs font-medium text-gray-400 mb-1">Job Description</label>
+                        <textarea x-model="atsJobDesc" rows="6"
+                            class="w-full bg-space-950 border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-accent-500 transition"
+                            placeholder="Paste the job description here..."></textarea>
+                    </div>
+                    <button @click="runAtsCheck()" :disabled="atsChecking || !atsFile"
+                        class="w-full bg-accent-600 hover:bg-accent-500 text-white font-bold py-4 px-8 rounded-xl shadow-lg shadow-accent-500/25 transition flex items-center justify-center gap-3 disabled:opacity-50 disabled:cursor-not-allowed">
+                        <i class="fa-solid fa-bullseye" :class="{'fa-spin': atsChecking}"></i>
+                        <span x-text="atsChecking ? 'Scanning...' : 'Scan Resume'"></span>
                     </button>
                 </div>
 
-                <!-- ATS Results -->
-                <div x-show="atsResult" class="space-y-6">
-                    <!-- Score -->
-                    <div class="glass-panel p-6 rounded-xl flex items-center justify-between">
+                <div x-show="atsResult" class="glass p-8 rounded-2xl border-l-4"
+                    :class="atsResult?.score >= 80 ? 'border-green-500' : (atsResult?.score >= 50 ? 'border-yellow-500' : 'border-red-500')">
+                    <div class="flex items-center justify-between mb-6">
+                        <h3 class="text-xl font-bold text-white">Analysis Results</h3>
+                        <div class="text-3xl font-black"
+                            :class="atsResult?.score >= 80 ? 'text-green-500' : (atsResult?.score >= 50 ? 'text-yellow-500' : 'text-red-500')"
+                            x-text="atsResult?.score + '/100'"></div>
+                    </div>
+                    <p class="text-gray-300 mb-6" x-text="atsResult?.summary"></p>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
                         <div>
-                            <p class="text-gray-400 text-xs uppercase font-bold">ATS Score</p>
-                            <h2 class="text-4xl font-black text-white" x-text="atsResult?.score + '/100'"></h2>
+                            <h4 class="font-bold text-white mb-3 text-sm uppercase tracking-wider">Missing Keywords</h4>
+                            <div class="flex flex-wrap gap-2">
+                                <template x-for="kw in atsResult?.keywords?.missing">
+                                    <span
+                                        class="px-2 py-1 bg-red-500/10 text-red-400 rounded text-xs border border-red-500/20"
+                                        x-text="kw"></span>
+                                </template>
+                            </div>
                         </div>
-                        <div class="h-2 w-48 bg-space-900 rounded-full overflow-hidden">
-                            <div class="h-full bg-gradient-to-r from-red-500 to-green-500 transition-all duration-1000"
-                                :style="`width: ${atsResult?.score}%`"></div>
+                        <div>
+                            <h4 class="font-bold text-white mb-3 text-sm uppercase tracking-wider">Matched Keywords</h4>
+                            <div class="flex flex-wrap gap-2">
+                                <template x-for="kw in atsResult?.keywords?.matched">
+                                    <span
+                                        class="px-2 py-1 bg-green-500/10 text-green-400 rounded text-xs border border-green-500/20"
+                                        x-text="kw"></span>
+                                </template>
+                            </div>
                         </div>
                     </div>
 
-                    <!-- Feedback -->
-                    <div class="glass-panel p-6 rounded-xl">
-                        <p class="text-gray-300 leading-relaxed" x-text="atsResult?.summary"></p>
+                    <div>
+                        <h4 class="font-bold text-white mb-3 text-sm uppercase tracking-wider">Recommendations</h4>
+                        <ul class="space-y-2">
+                            <template x-for="rec in atsResult?.recommendations">
+                                <li class="flex items-start gap-3 text-sm text-gray-400">
+                                    <i class="fa-solid fa-circle-exclamation text-accent-500 mt-1"></i>
+                                    <span x-text="rec"></span>
+                                </li>
+                            </template>
+                        </ul>
                     </div>
                 </div>
             </div>
 
         </div>
 
-        <!-- PDF PREVIEW MODAL -->
-        <div x-show="showPdfModal" class="absolute inset-0 z-50 bg-space-950 flex flex-col" x-transition.opacity>
-            <div class="h-14 border-b border-gray-800 flex items-center justify-between px-6 bg-space-900">
-                <h3 class="font-bold text-white">Resume Preview</h3>
-                <button @click="showPdfModal = false" class="text-gray-400 hover:text-white"><i
-                        class="fa-solid fa-xmark text-xl"></i></button>
+        <!-- PDF MODAL -->
+        <div x-show="showPdfModal" class="absolute inset-0 z-50 bg-space-950/90 backdrop-blur-md flex flex-col"
+            style="display: none;">
+            <div class="h-16 flex items-center justify-between px-8 border-b border-white/10">
+                <h2 class="font-display font-bold text-xl text-white">Your Resume</h2>
+                <div class="flex items-center gap-4">
+                    <a :href="pdfUrl" download="resume.pdf"
+                        class="bg-accent-600 hover:bg-accent-500 text-white px-4 py-2 rounded-lg text-sm font-bold transition">Download
+                        PDF</a>
+                    <button @click="showPdfModal = false" class="text-gray-400 hover:text-white transition"><i
+                            class="fa-solid fa-xmark text-xl"></i></button>
+                </div>
             </div>
             <iframe :src="pdfUrl" class="flex-1 w-full border-none bg-gray-800"></iframe>
         </div>
@@ -345,15 +328,9 @@
         function app() {
             return {
                 // State
-                currentStep: 1,
+                currentTab: 'builder',
                 user: null,
                 apiKey: '',
-                navItems: [
-                    { step: 1, label: 'Profile' },
-                    { step: 2, label: 'Experience' },
-                    { step: 3, label: 'Templates' },
-                    { step: 4, label: 'ATS Check' }
-                ],
 
                 // Data
                 formData: {
@@ -362,7 +339,7 @@
                 },
                 profileImage: null,
                 templates: [],
-                selectedTemplate: null,
+                selectedTemplate: 'templates/Star/star.tex', // Default template
 
                 // UI State
                 generating: false,
@@ -376,8 +353,16 @@
                 atsResult: null,
 
                 // Computed
-                get pageTitle() {
-                    return ['Candidate Profile', 'Experience Dump', 'Select Template', 'ATS Optimizer'][this.currentStep - 1];
+                get tabTitle() {
+                    if (this.currentTab === 'builder') return 'Resume Builder';
+                    if (this.currentTab === 'templates') return 'Template Gallery';
+                    if (this.currentTab === 'ats') return 'ATS Scanner';
+                    return 'DocuCV';
+                },
+
+                getInitials() {
+                    if (!this.user || !this.user.full_name) return 'U';
+                    return this.user.full_name.split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase();
                 },
 
                 async initApp() {
@@ -393,6 +378,9 @@
                         return;
                     }
                     this.user = session.user;
+                    // Mock user data for display if missing
+                    if (!this.user.full_name) this.user.full_name = this.user.user_metadata.full_name || 'User';
+                    if (!this.user.credits) this.user.credits = 3;
 
                     // 3. Load Templates
                     this.fetchTemplates();
@@ -420,7 +408,7 @@
                 },
 
                 async generateResume() {
-                    if (!this.apiKey) { alert("Please enter your Gemini API Key in the sidebar."); return; }
+                    if (!this.apiKey) { alert("Please enter your Gemini API Key in the header."); return; }
 
                     this.generating = true;
                     try {

@@ -4,82 +4,121 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login - RoverAI</title>
+    <title>Login - DocuCV</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link
-        href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&family=Inter:wght@300;400;600&display=swap"
+        href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;700;900&family=Inter:wght@300;400;500;600&display=swap"
         rel="stylesheet">
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
     <script>
         tailwind.config = {
             theme: {
                 extend: {
                     fontFamily: { sans: ['Inter', 'sans-serif'], display: ['Outfit', 'sans-serif'] },
                     colors: {
-                        space: { 950: '#05050a', 900: '#0b0c15', 800: '#151725' },
-                        accent: { 500: '#6366f1', 600: '#4f46e5' }
+                        space: { 950: '#030305', 900: '#0A0A0F', 800: '#12121A', 700: '#1C1C26' },
+                        accent: { 400: '#818cf8', 500: '#6366f1', 600: '#4f46e5' }
+                    },
+                    backgroundImage: {
+                        'nebula': 'radial-gradient(circle at 50% -20%, #2e1065 0%, #030305 45%)',
+                        'grid': "url('https://grainy-gradients.vercel.app/noise.svg')"
                     }
                 }
             }
         }
     </script>
+    <style>
+        body {
+            background-color: #030305;
+            color: #e2e8f0;
+        }
+
+        .glass {
+            background: rgba(255, 255, 255, 0.03);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+    </style>
 </head>
 
-<body class="bg-space-950 text-white h-screen flex items-center justify-center relative overflow-hidden"
-    x-data="auth()">
+<body class="min-h-screen flex items-center justify-center relative overflow-hidden" x-data="auth()" x-init="init()">
 
-    <!-- Background Effects -->
-    <div class="absolute top-0 left-0 w-full h-full overflow-hidden z-0 pointer-events-none">
-        <div class="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] bg-purple-600/20 rounded-full blur-[100px]"></div>
-        <div class="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] bg-accent-600/20 rounded-full blur-[100px]">
-        </div>
-    </div>
+    <div class="absolute inset-0 bg-nebula z-0"></div>
+    <div class="absolute inset-0 opacity-20 bg-grid z-0"></div>
 
-    <div class="relative z-10 w-full max-w-md p-8">
+    <div class="relative z-10 w-full max-w-md px-6">
         <div class="text-center mb-8">
-            <a href="/" class="inline-block font-display font-bold text-2xl tracking-wide mb-2">Rover<span
-                    class="text-accent-500">AI</span></a>
-            <h1 class="text-xl text-gray-300">Welcome Back</h1>
+            <a href="/" class="inline-block font-display font-bold text-2xl tracking-wide mb-2">Docu<span
+                    class="text-accent-500">CV</span></a>
+            <p class="text-gray-400">Sign in to continue building your career.</p>
         </div>
 
-        <div class="bg-space-900/50 backdrop-blur-xl border border-white/10 rounded-2xl p-8 shadow-2xl">
-            <!-- Tabs -->
-            <div class="flex border-b border-white/10 mb-6">
-                <button @click="mode = 'login'"
-                    :class="mode === 'login' ? 'text-white border-accent-500' : 'text-gray-500 border-transparent'"
-                    class="flex-1 pb-3 text-sm font-bold border-b-2 transition">Sign In</button>
-                <button @click="mode = 'signup'"
-                    :class="mode === 'signup' ? 'text-white border-accent-500' : 'text-gray-500 border-transparent'"
-                    class="flex-1 pb-3 text-sm font-bold border-b-2 transition">Create Account</button>
+        <div class="glass p-8 rounded-2xl shadow-2xl border-t border-white/10">
+            <!-- Error Message -->
+            <div x-show="error"
+                class="mb-4 p-3 rounded bg-red-500/10 border border-red-500/20 text-red-400 text-sm flex items-center gap-2">
+                <i class="fa-solid fa-circle-exclamation"></i> <span x-text="error"></span>
             </div>
 
-            <form @submit.prevent="handleSubmit" class="space-y-4">
-                <div>
-                    <label class="block text-xs text-gray-400 uppercase font-bold mb-1">Email Address</label>
-                    <input type="email" x-model="email" required
-                        class="w-full bg-space-950 border border-gray-700 rounded-lg p-3 text-white focus:border-accent-500 outline-none transition">
-                </div>
+            <!-- Success Message -->
+            <div x-show="successMsg"
+                class="mb-4 p-3 rounded bg-green-500/10 border border-green-500/20 text-green-400 text-sm flex items-center gap-2">
+                <i class="fa-solid fa-check-circle"></i> <span x-text="successMsg"></span>
+            </div>
 
-                <div>
-                    <label class="block text-xs text-gray-400 uppercase font-bold mb-1">Password</label>
-                    <input type="password" x-model="password" required
-                        class="w-full bg-space-950 border border-gray-700 rounded-lg p-3 text-white focus:border-accent-500 outline-none transition">
+            <!-- Social Login -->
+            <button @click="signInWithGithub"
+                class="w-full py-2.5 rounded-lg bg-white text-black font-bold flex items-center justify-center gap-2 hover:bg-gray-200 transition mb-4">
+                <i class="fa-brands fa-github text-lg"></i> Continue with GitHub
+            </button>
+            <button @click="signInWithGoogle"
+                class="w-full py-2.5 rounded-lg bg-space-800 text-white font-bold border border-gray-700 flex items-center justify-center gap-2 hover:bg-space-700 transition">
+                <i class="fa-brands fa-google text-lg"></i> Continue with Google
+            </button>
+
+            <div class="relative my-6">
+                <div class="absolute inset-0 flex items-center">
+                    <div class="w-full border-t border-gray-800"></div>
+                </div>
+                <div class="relative flex justify-center text-xs uppercase"><span
+                        class="bg-space-900 px-2 text-gray-500">Or continue with email</span></div>
+            </div>
+
+            <!-- Email Form -->
+            <form @submit.prevent="handleAuth">
+                <div class="space-y-4">
+                    <div x-show="isSignUp">
+                        <label class="block text-xs font-bold text-gray-500 uppercase mb-1">Full Name</label>
+                        <input type="text" x-model="fullName"
+                            class="w-full bg-space-950 border border-gray-700 rounded-lg px-4 py-2.5 text-white focus:border-accent-500 focus:outline-none transition">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-gray-500 uppercase mb-1">Email Address</label>
+                        <input type="email" x-model="email" required
+                            class="w-full bg-space-950 border border-gray-700 rounded-lg px-4 py-2.5 text-white focus:border-accent-500 focus:outline-none transition">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-gray-500 uppercase mb-1">Password</label>
+                        <input type="password" x-model="password" required
+                            class="w-full bg-space-950 border border-gray-700 rounded-lg px-4 py-2.5 text-white focus:border-accent-500 focus:outline-none transition">
+                    </div>
                 </div>
 
                 <button type="submit" :disabled="loading"
-                    class="w-full bg-accent-600 hover:bg-accent-500 text-white font-bold py-3 rounded-lg transition shadow-lg shadow-accent-500/25 flex justify-center items-center">
-                    <span x-show="!loading" x-text="mode === 'login' ? 'Sign In' : 'Create Account'"></span>
-                    <span x-show="loading"
-                        class="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin"></span>
+                    class="w-full mt-6 bg-accent-600 text-white font-bold py-3 rounded-lg hover:bg-accent-500 transition shadow-lg shadow-accent-500/20 flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed">
+                    <span x-show="!loading" x-text="isSignUp ? 'Create Account' : 'Sign In'"></span>
+                    <span x-show="loading"><i class="fa-solid fa-circle-notch fa-spin"></i> Processing...</span>
                 </button>
             </form>
 
-            <p x-show="message" x-text="message" :class="isError ? 'text-red-400' : 'text-green-400'"
-                class="text-xs text-center mt-4"></p>
-
-            <div class="mt-6 pt-6 border-t border-white/5 text-center">
-                <p class="text-xs text-gray-500">By continuing, you agree to our Terms & Privacy Policy.</p>
+            <div class="mt-6 text-center text-sm text-gray-400">
+                <p x-show="!isSignUp">Don't have an account? <a href="#" @click.prevent="toggleMode()"
+                        class="text-accent-400 hover:text-white font-bold">Sign up</a></p>
+                <p x-show="isSignUp">Already have an account? <a href="#" @click.prevent="toggleMode()"
+                        class="text-accent-400 hover:text-white font-bold">Sign in</a></p>
             </div>
         </div>
     </div>
@@ -87,54 +126,89 @@
     <script>
         function auth() {
             return {
-                mode: 'login',
+                supabase: null,
+                isSignUp: false,
                 email: '',
                 password: '',
+                fullName: '',
                 loading: false,
-                message: '',
-                isError: false,
-                supabase: null,
+                error: null,
+                successMsg: null,
 
                 init() {
                     const SUPABASE_URL = 'https://bemxgkzdfqqwlxfsawlm.supabase.co';
                     const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJlbXhna3pkZnFxd2x4ZnNhd2xtIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjM1NzYwMTgsImV4cCI6MjA3OTE1MjAxOH0.AvIux8Yv5WtZw7icPwgoQr1OavcFqpWDO4OAsvwmzj4';
                     this.supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+                    // Check if already logged in
+                    this.supabase.auth.getSession().then(({ data: { session } }) => {
+                        if (session) window.location.href = '/app.html';
+                    });
                 },
 
-                async handleSubmit() {
+                toggleMode() {
+                    this.isSignUp = !this.isSignUp;
+                    this.error = null;
+                    this.successMsg = null;
+                },
+
+                async handleAuth() {
                     this.loading = true;
-                    this.message = '';
-                    this.isError = false;
+                    this.error = null;
+                    this.successMsg = null;
 
                     try {
-                        let result;
-                        if (this.mode === 'login') {
-                            result = await this.supabase.auth.signInWithPassword({
+                        if (this.isSignUp) {
+                            // Sign Up
+                            const { data, error } = await this.supabase.auth.signUp({
+                                email: this.email,
+                                password: this.password,
+                                options: {
+                                    data: {
+                                        full_name: this.fullName,
+                                        avatar_url: `https://ui-avatars.com/api/?name=${encodeURIComponent(this.fullName)}&background=random`
+                                    }
+                                }
+                            });
+                            if (error) throw error;
+                            this.successMsg = 'Account created! Please check your email to confirm.';
+                        } else {
+                            // Sign In
+                            const { data, error } = await this.supabase.auth.signInWithPassword({
                                 email: this.email,
                                 password: this.password
                             });
-                        } else {
-                            result = await this.supabase.auth.signUp({
-                                email: this.email,
-                                password: this.password
-                            });
-                        }
-
-                        if (result.error) throw result.error;
-
-                        if (this.mode === 'signup' && !result.data.session) {
-                            this.message = "Check your email to confirm your account!";
-                            this.isError = false;
-                        } else {
-                            // Success - Redirect to App
+                            if (error) throw error;
                             window.location.href = '/app.html';
                         }
-
-                    } catch (e) {
-                        this.message = e.message;
-                        this.isError = true;
+                    } catch (err) {
+                        this.error = err.message;
                     } finally {
                         this.loading = false;
+                    }
+                },
+
+                async signInWithGithub() {
+                    try {
+                        const { error } = await this.supabase.auth.signInWithOAuth({
+                            provider: 'github',
+                            options: { redirectTo: window.location.origin + '/app.html' }
+                        });
+                        if (error) throw error;
+                    } catch (err) {
+                        this.error = err.message;
+                    }
+                },
+
+                async signInWithGoogle() {
+                    try {
+                        const { error } = await this.supabase.auth.signInWithOAuth({
+                            provider: 'google',
+                            options: { redirectTo: window.location.origin + '/app.html' }
+                        });
+                        if (error) throw error;
+                    } catch (err) {
+                        this.error = err.message;
                     }
                 }
             }

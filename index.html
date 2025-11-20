@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>RoverAI - The AI Resume Builder That Gets You Hired</title>
+    <title>DocuCV - The AI Resume Builder That Gets You Hired</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link
         href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;700;900&family=Inter:wght@300;400;500;600&display=swap"
@@ -13,6 +13,7 @@
     <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
     <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
     <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
     <script>
         tailwind.config = {
@@ -78,10 +79,10 @@
             <a href="/" class="flex items-center gap-2 group">
                 <div
                     class="w-8 h-8 bg-accent-600 rounded-lg flex items-center justify-center text-white group-hover:rotate-12 transition">
-                    <i class="fa-solid fa-rocket"></i>
+                    <i class="fa-solid fa-file-lines"></i>
                 </div>
-                <span class="font-display font-bold text-xl tracking-wide text-white">Rover<span
-                        class="text-accent-500">AI</span></span>
+                <span class="font-display font-bold text-xl tracking-wide text-white">Docu<span
+                        class="text-accent-500">CV</span></span>
             </a>
 
             <div class="hidden md:flex items-center gap-8 text-sm font-medium text-gray-400">
@@ -120,7 +121,7 @@
                 </h1>
 
                 <p class="text-lg text-gray-400 mb-8 max-w-lg leading-relaxed">
-                    The average recruiter spends 6 seconds on a resume. RoverAI uses advanced LLMs to craft ATS-proof
+                    The average recruiter spends 6 seconds on a resume. DocuCV uses advanced LLMs to craft ATS-proof
                     resumes that demand attention.
                 </p>
 
@@ -184,7 +185,8 @@
                 <div class="p-6 rounded-2xl bg-red-500/5 border border-red-500/10">
                     <div
                         class="w-12 h-12 mx-auto bg-red-500/10 rounded-full flex items-center justify-center text-red-500 mb-4">
-                        <i class="fa-solid fa-robot"></i></div>
+                        <i class="fa-solid fa-robot"></i>
+                    </div>
                     <h3 class="font-bold text-white text-lg mb-2">ATS Rejection</h3>
                     <p class="text-gray-400 text-sm">75% of resumes are rejected by bots before a human ever sees them
                         because of bad formatting.</p>
@@ -192,7 +194,8 @@
                 <div class="p-6 rounded-2xl bg-orange-500/5 border border-orange-500/10">
                     <div
                         class="w-12 h-12 mx-auto bg-orange-500/10 rounded-full flex items-center justify-center text-orange-500 mb-4">
-                        <i class="fa-solid fa-pen-nib"></i></div>
+                        <i class="fa-solid fa-pen-nib"></i>
+                    </div>
                     <h3 class="font-bold text-white text-lg mb-2">Weak Writing</h3>
                     <p class="text-gray-400 text-sm">Generic bullet points like "Responsible for sales" don't sell your
                         impact or potential.</p>
@@ -200,7 +203,8 @@
                 <div class="p-6 rounded-2xl bg-yellow-500/5 border border-yellow-500/10">
                     <div
                         class="w-12 h-12 mx-auto bg-yellow-500/10 rounded-full flex items-center justify-center text-yellow-500 mb-4">
-                        <i class="fa-solid fa-clock"></i></div>
+                        <i class="fa-solid fa-clock"></i>
+                    </div>
                     <h3 class="font-bold text-white text-lg mb-2">Wasted Time</h3>
                     <p class="text-gray-400 text-sm">Spending hours tweaking margins in Word instead of preparing for
                         interviews.</p>
@@ -289,7 +293,8 @@
                         2</div>
                     <h3 class="font-bold text-xl text-white mb-3">AI Transformation</h3>
                     <p class="text-gray-400 text-sm leading-relaxed">Our engine rewrites your experience using the
-                        <strong>STAR method</strong> and quantifies your impact.</p>
+                        <strong>STAR method</strong> and quantifies your impact.
+                    </p>
                 </div>
                 <div class="text-center group" data-aos="fade-up" data-aos-delay="200">
                     <div
@@ -313,7 +318,7 @@
                             class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i
                             class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i></div>
                     <p class="text-gray-300 mb-6 leading-relaxed">"I applied to 50 jobs with my old resume and got 0
-                        calls. Used RoverAI, applied to 5, and got 2 interviews. The AI rewriting is magic."</p>
+                        calls. Used DocuCV, applied to 5, and got 2 interviews. The AI rewriting is magic."</p>
                     <div class="flex items-center gap-3">
                         <div class="w-10 h-10 bg-gray-700 rounded-full"></div>
                         <div>
@@ -394,7 +399,7 @@
         <div class="max-w-4xl mx-auto px-6 relative z-10 text-center">
             <h2 class="font-display font-black text-4xl md:text-5xl text-white mb-6">Ready to land your dream job?</h2>
             <p class="text-gray-300 mb-8 text-lg">Join thousands of professionals who have upgraded their career with
-                RoverAI.</p>
+                DocuCV.</p>
             <a href="app.html"
                 class="inline-block px-10 py-5 bg-white text-black font-bold text-lg rounded-full hover:bg-gray-100 transition shadow-2xl hover:scale-105 transform">
                 Build Your Resume Now
@@ -411,10 +416,10 @@
                 <div>
                     <a href="/" class="flex items-center gap-2 mb-6">
                         <div class="w-8 h-8 bg-accent-600 rounded-lg flex items-center justify-center text-white">
-                            <i class="fa-solid fa-rocket"></i>
+                            <i class="fa-solid fa-file-lines"></i>
                         </div>
-                        <span class="font-display font-bold text-xl tracking-wide text-white">Rover<span
-                                class="text-accent-500">AI</span></span>
+                        <span class="font-display font-bold text-xl tracking-wide text-white">Docu<span
+                                class="text-accent-500">CV</span></span>
                     </a>
                     <p class="text-gray-500 text-sm leading-relaxed mb-6">
                         The world's most advanced AI resume builder. Crafted for ambitious professionals who value their
@@ -470,7 +475,7 @@
             </div>
 
             <div class="border-t border-white/5 pt-8 flex flex-col md:flex-row justify-between items-center gap-4">
-                <p class="text-gray-600 text-xs">&copy; 2024 RoverAI Inc. All rights reserved.</p>
+                <p class="text-gray-600 text-xs">&copy; 2024 DocuCV Inc. All rights reserved.</p>
                 <div class="flex items-center gap-2 text-xs text-gray-600">
                     <span class="w-2 h-2 rounded-full bg-green-500"></span>
                     <span>All Systems Operational</span>

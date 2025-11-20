@@ -1,182 +1,184 @@
-# 🚀 RoverAI - The Future of Resume Building
+# DocuCV - The AI Resume Builder That Gets You Hired 🚀
 
-RoverAI is a premium, AI-powered SaaS application that helps users craft "Industry Level" resumes in seconds. It uses **Google Gemini 2.5** to rewrite messy brain dumps into ATS-optimized bullet points and compiles them into professional LaTeX PDFs.
+**DocuCV** is a next-generation AI resume builder designed to help professionals land their dream jobs. It leverages **Google Gemini AI** to rewrite bullet points using the STAR method, quantifies achievements, and compiles everything into a flawless, ATS-friendly **LaTeX PDF**.
 
-![RoverAI Banner](https://via.placeholder.com/1200x600/0b0c15/6366f1?text=RoverAI+Dashboard)
+![DocuCV Screenshot](https://cdn.dribbble.com/users/1615584/screenshots/15963368/media/f62569927560308eb355041a8ef8a63a.jpg?resize=1600x1200&vertical=center)
 
 ## ✨ Features
 
-*   **🧠 AI Brain (Gemini 2.5)**: Automatically rewrites experience using the **STAR Method** and quantifies results.
-*   **🎨 Nebula Pro UI**: A stunning, glassmorphism-based dark mode interface built with **Tailwind CSS** and **Alpine.js**.
-*   **📄 Real LaTeX Rendering**: Generates high-quality, typographically perfect PDFs that beat ATS bots.
-*   **🛡️ Supabase Auth**: Secure user authentication (Sign Up, Login, Reset Password).
-*   **☁️ Cloud Storage**: Saves user profiles and generated resumes to Supabase Database.
-*   **🔍 ATS Scanner**: Built-in tool to compare resumes against job descriptions and get a match score.
-
----
+*   **AI-Powered Writing**: Transforms "I did sales" into "Spearheaded a sales initiative generating $50k in Q3 revenue" using the STAR method.
+*   **Real LaTeX Compilation**: Generates professional, typographically perfect PDFs that pass 99.9% of ATS scanners.
+*   **ATS Scanner**: Upload your current resume + a job description to get a match score and actionable feedback.
+*   **Nebula Pro Design**: A stunning, dark-mode interface with glassmorphism and smooth animations.
+*   **Supabase Integration**: Secure authentication (Email/Password, OAuth) and database storage for user profiles and credits.
+*   **Multi-Page Architecture**: Dedicated Landing, Login, Pricing, and App Dashboard pages.
 
 ## 🛠️ Tech Stack
 
-*   **Frontend**: HTML5, Tailwind CSS, Alpine.js (No build step required for UI).
-*   **Backend**: Node.js, Express.
-*   **AI**: Google Gemini API (`@google/generative-ai`).
-*   **Database & Auth**: Supabase.
-*   **PDF Engine**: Remote LaTeX Compiler.
-
----
+*   **Frontend**: HTML5, Tailwind CSS, Alpine.js, Vanilla JS
+*   **Backend**: Node.js, Express.js
+*   **AI Engine**: Google Gemini 1.5 Flash
+*   **Database & Auth**: Supabase
+*   **PDF Engine**: Remote LaTeX Compiler (latex.ytotech.com)
 
 ## 🚀 Quick Start
 
-1.  **Clone the repo**
+### Prerequisites
+
+*   Node.js (v18+)
+*   NPM
+*   A Supabase Project
+*   A Google Gemini API Key
+
+### Installation
+
+1.  **Clone the repository**
     ```bash
-    git clone https://github.com/yourusername/rover-ai.git
-    cd rover-ai
+    git clone https://github.com/yourusername/docucv.git
+    cd docucv
     ```
 
-2.  **Install Dependencies**
+2.  **Install dependencies**
     ```bash
     npm install
     ```
 
-3.  **Configure Environment**
+3.  **Configure Environment Variables**
     Create a `.env` file in the root directory:
     ```env
     SUPABASE_URL=your_supabase_url
     SUPABASE_KEY=your_supabase_anon_key
     ```
 
-4.  **Run the Server**
+4.  **Start the Server**
     ```bash
     node server.js
     ```
+
+5.  **Open the App**
     Visit `http://localhost:3000` in your browser.
 
----
+## 🗄️ Supabase Configuration
 
-## ⚡ Supabase Configuration
-
-To make the app work, you need to set up your Supabase project.
+To get the backend working, you need to set up your Supabase project.
 
 ### 1. Database Schema
-Run this SQL in your Supabase **SQL Editor** to create the necessary tables:
+Run the following SQL in your Supabase **SQL Editor** to create the user profiles table:
 
 ```sql
--- Create Profiles Table
+-- Create a table for public profiles
 create table public.profiles (
-  id uuid references auth.users not null primary key,
-  email text,
+  id uuid references auth.users on delete cascade not null primary key,
+  updated_at timestamp with time zone,
   full_name text,
-  credits int default 3,
+  avatar_url text,
+  website text,
+  credits integer default 3,
   is_pro boolean default false,
-  created_at timestamp with time zone default timezone('utc'::text, now()) not null
+
+  constraint username_length check (char_length(full_name) >= 3)
 );
 
--- Enable Row Level Security (RLS)
+-- Set up Row Level Security (RLS)
 alter table public.profiles enable row level security;
 
--- Create Policy: Users can only view/edit their own profile
-create policy "Users can view own profile" on profiles for select using (auth.uid() = id);
-create policy "Users can update own profile" on profiles for update using (auth.uid() = id);
+create policy "Public profiles are viewable by everyone."
+  on profiles for select
+  using ( true );
 
--- Trigger to create profile on signup
-create function public.handle_new_user() 
-returns trigger as $$
+create policy "Users can insert their own profile."
+  on profiles for insert
+  with check ( auth.uid() = id );
+
+create policy "Users can update own profile."
+  on profiles for update
+  using ( auth.uid() = id );
+
+-- Function to handle new user signup automatically
+create function public.handle_new_user()
+returns trigger
+language plpgsql
+security definer set search_path = public
+as $$
 begin
-  insert into public.profiles (id, email, full_name)
-  values (new.id, new.email, new.raw_user_meta_data->>'full_name');
+  insert into public.profiles (id, full_name, avatar_url, credits)
+  values (new.id, new.raw_user_meta_data->>'full_name', new.raw_user_meta_data->>'avatar_url', 3);
   return new;
 end;
-$$ language plpgsql security definer;
+$$;
 
+-- Trigger the function every time a user is created
 create trigger on_auth_user_created
   after insert on auth.users
   for each row execute procedure public.handle_new_user();
 ```
 
-### 2. Premium Email Templates
-Copy these HTML templates into your **Supabase Dashboard > Authentication > Email Templates**.
+### 2. Email Templates
+Go to **Authentication > Email Templates** in Supabase and use these "Nebula Pro" themed templates:
 
-#### 📧 Confirm Your Signup
-*Subject Line:* `Welcome to RoverAI! Confirm your account.`
-
+**Confirm Your Signup**
 ```html
 <!DOCTYPE html>
 <html>
 <head>
   <style>
-    body { font-family: 'Inter', sans-serif; background-color: #0b0c15; color: #e2e8f0; margin: 0; padding: 0; }
-    .container { max-width: 600px; margin: 40px auto; background: #151725; border-radius: 16px; overflow: hidden; border: 1px solid #2d3748; }
-    .header { background: #1f2235; padding: 30px; text-align: center; border-bottom: 1px solid #2d3748; }
-    .logo { font-size: 24px; font-weight: bold; color: #fff; letter-spacing: 1px; }
-    .logo span { color: #6366f1; }
-    .content { padding: 40px 30px; text-align: center; }
-    h1 { color: #fff; font-size: 24px; margin-bottom: 16px; }
-    p { color: #94a3b8; line-height: 1.6; margin-bottom: 30px; font-size: 16px; }
-    .btn { display: inline-block; background: #6366f1; color: #fff; text-decoration: none; padding: 14px 32px; border-radius: 8px; font-weight: bold; font-size: 16px; transition: background 0.3s; }
-    .btn:hover { background: #4f46e5; }
-    .footer { padding: 20px; text-align: center; font-size: 12px; color: #64748b; border-top: 1px solid #2d3748; background: #0b0c15; }
+    body { background-color: #030305; color: #e2e8f0; font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; padding: 40px; }
+    .container { max-width: 600px; margin: 0 auto; background: #0A0A0F; border: 1px solid #1C1C26; border-radius: 16px; overflow: hidden; }
+    .header { background: #12121A; padding: 30px; text-align: center; border-bottom: 1px solid #1C1C26; }
+    .content { padding: 40px; text-align: center; }
+    .button { display: inline-block; background-color: #6366f1; color: white; padding: 14px 28px; text-decoration: none; border-radius: 8px; font-weight: bold; margin-top: 20px; }
+    .footer { padding: 20px; text-align: center; font-size: 12px; color: #64748b; }
   </style>
 </head>
 <body>
   <div class="container">
     <div class="header">
-      <div class="logo">Rover<span>AI</span></div>
+      <h1 style="color: white; margin: 0;">Docu<span style="color: #6366f1;">CV</span></h1>
     </div>
     <div class="content">
-      <h1>Verify your email address</h1>
-      <p>You're one step away from crafting the perfect resume. Please confirm your email address to unlock your account.</p>
-      <a href="{{ .ConfirmationURL }}" class="btn">Confirm Email</a>
+      <h2 style="color: white;">Confirm your email</h2>
+      <p style="color: #94a3b8; line-height: 1.6;">Welcome to the future of career building. Click the button below to verify your email address and start building your resume.</p>
+      <a href="{{ .ConfirmationURL }}" class="button">Confirm Email</a>
     </div>
     <div class="footer">
-      &copy; 2024 RoverAI Inc. All rights reserved.<br>
-      If you didn't create an account, you can safely ignore this email.
+      &copy; 2024 DocuCV Inc.
     </div>
   </div>
 </body>
 </html>
 ```
 
-#### 🔒 Reset Password
-*Subject Line:* `Reset your RoverAI password`
-
+**Reset Password**
 ```html
 <!DOCTYPE html>
 <html>
 <head>
   <style>
-    body { font-family: 'Inter', sans-serif; background-color: #0b0c15; color: #e2e8f0; margin: 0; padding: 0; }
-    .container { max-width: 600px; margin: 40px auto; background: #151725; border-radius: 16px; overflow: hidden; border: 1px solid #2d3748; }
-    .header { background: #1f2235; padding: 30px; text-align: center; border-bottom: 1px solid #2d3748; }
-    .logo { font-size: 24px; font-weight: bold; color: #fff; letter-spacing: 1px; }
-    .logo span { color: #6366f1; }
-    .content { padding: 40px 30px; text-align: center; }
-    h1 { color: #fff; font-size: 24px; margin-bottom: 16px; }
-    p { color: #94a3b8; line-height: 1.6; margin-bottom: 30px; font-size: 16px; }
-    .btn { display: inline-block; background: #6366f1; color: #fff; text-decoration: none; padding: 14px 32px; border-radius: 8px; font-weight: bold; font-size: 16px; transition: background 0.3s; }
-    .btn:hover { background: #4f46e5; }
-    .footer { padding: 20px; text-align: center; font-size: 12px; color: #64748b; border-top: 1px solid #2d3748; background: #0b0c15; }
+    body { background-color: #030305; color: #e2e8f0; font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; padding: 40px; }
+    .container { max-width: 600px; margin: 0 auto; background: #0A0A0F; border: 1px solid #1C1C26; border-radius: 16px; overflow: hidden; }
+    .header { background: #12121A; padding: 30px; text-align: center; border-bottom: 1px solid #1C1C26; }
+    .content { padding: 40px; text-align: center; }
+    .button { display: inline-block; background-color: #6366f1; color: white; padding: 14px 28px; text-decoration: none; border-radius: 8px; font-weight: bold; margin-top: 20px; }
+    .footer { padding: 20px; text-align: center; font-size: 12px; color: #64748b; }
   </style>
 </head>
 <body>
   <div class="container">
     <div class="header">
-      <div class="logo">Rover<span>AI</span></div>
+      <h1 style="color: white; margin: 0;">Docu<span style="color: #6366f1;">CV</span></h1>
     </div>
     <div class="content">
-      <h1>Reset your password</h1>
-      <p>We received a request to reset your password. Click the button below to choose a new one.</p>
-      <a href="{{ .ConfirmationURL }}" class="btn">Reset Password</a>
+      <h2 style="color: white;">Reset Password</h2>
+      <p style="color: #94a3b8; line-height: 1.6;">Follow this link to reset the password for your user:</p>
+      <a href="{{ .ConfirmationURL }}" class="button">Reset Password</a>
     </div>
     <div class="footer">
-      &copy; 2024 RoverAI Inc. All rights reserved.<br>
-      If you didn't request this, you can safely ignore this email.
+      &copy; 2024 DocuCV Inc.
     </div>
   </div>
 </body>
 </html>
 ```
-
----
 
 ## 📄 License
 
