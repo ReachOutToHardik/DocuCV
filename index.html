@@ -1,0 +1,491 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RoverAI - The AI Resume Builder That Gets You Hired</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;700;900&family=Inter:wght@300;400;500;600&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: { sans: ['Inter', 'sans-serif'], display: ['Outfit', 'sans-serif'] },
+                    colors: {
+                        space: { 950: '#030305', 900: '#0A0A0F', 800: '#12121A', 700: '#1C1C26' },
+                        accent: { 400: '#818cf8', 500: '#6366f1', 600: '#4f46e5' }
+                    },
+                    backgroundImage: {
+                        'nebula': 'radial-gradient(circle at 50% -20%, #2e1065 0%, #030305 45%)',
+                        'grid': "url('https://grainy-gradients.vercel.app/noise.svg')"
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            background-color: #030305;
+            color: #e2e8f0;
+        }
+
+        .glass {
+            background: rgba(255, 255, 255, 0.03);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .glass:hover {
+            border-color: rgba(99, 102, 241, 0.3);
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        .text-gradient {
+            background: linear-gradient(to right, #fff, #94a3b8);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        /* Accordion Transition */
+        .accordion-content {
+            transition: max-height 0.3s ease-out, opacity 0.3s ease-out;
+            max-height: 0;
+            opacity: 0;
+            overflow: hidden;
+        }
+
+        .accordion-content.active {
+            max-height: 200px;
+            opacity: 1;
+        }
+    </style>
+</head>
+
+<body x-data="{ scrolled: false, mobileMenu: false }" @scroll.window="scrolled = (window.pageYOffset > 20)">
+
+    <!-- NAVBAR -->
+    <nav :class="scrolled ? 'bg-space-950/80 backdrop-blur-md border-b border-white/5' : 'bg-transparent border-transparent'"
+        class="fixed w-full z-50 transition-all duration-500">
+        <div class="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between">
+            <a href="/" class="flex items-center gap-2 group">
+                <div
+                    class="w-8 h-8 bg-accent-600 rounded-lg flex items-center justify-center text-white group-hover:rotate-12 transition">
+                    <i class="fa-solid fa-rocket"></i>
+                </div>
+                <span class="font-display font-bold text-xl tracking-wide text-white">Rover<span
+                        class="text-accent-500">AI</span></span>
+            </a>
+
+            <div class="hidden md:flex items-center gap-8 text-sm font-medium text-gray-400">
+                <a href="#features" class="hover:text-white transition">Features</a>
+                <a href="#how-it-works" class="hover:text-white transition">How it Works</a>
+                <a href="pricing.html" class="hover:text-white transition">Pricing</a>
+                <a href="login.html" class="text-white hover:text-accent-400 transition">Log In</a>
+                <a href="app.html"
+                    class="bg-white text-black hover:bg-gray-200 px-5 py-2.5 rounded-full font-bold transition transform hover:scale-105">Get
+                    Started</a>
+            </div>
+
+            <!-- Mobile Menu Toggle -->
+            <button @click="mobileMenu = !mobileMenu" class="md:hidden text-white text-xl"><i
+                    class="fa-solid fa-bars"></i></button>
+        </div>
+    </nav>
+
+    <!-- HERO SECTION -->
+    <section class="relative min-h-screen flex items-center pt-20 overflow-hidden">
+        <div class="absolute inset-0 bg-nebula z-0"></div>
+        <div class="absolute inset-0 opacity-20 bg-grid z-0"></div>
+
+        <div class="relative z-10 max-w-7xl mx-auto px-6 grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+            <div data-aos="fade-right" data-aos-duration="1000">
+                <div
+                    class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-accent-500/10 border border-accent-500/20 text-accent-400 text-xs font-bold tracking-wide mb-6">
+                    <span class="w-2 h-2 rounded-full bg-accent-400 animate-pulse"></span>
+                    V2.0 NOW LIVE
+                </div>
+
+                <h1 class="font-display font-black text-6xl md:text-7xl leading-[1.1] mb-6 text-white">
+                    Stop writing resumes. <br>
+                    <span class="text-transparent bg-clip-text bg-gradient-to-r from-accent-500 to-purple-500">Start
+                        getting hired.</span>
+                </h1>
+
+                <p class="text-lg text-gray-400 mb-8 max-w-lg leading-relaxed">
+                    The average recruiter spends 6 seconds on a resume. RoverAI uses advanced LLMs to craft ATS-proof
+                    resumes that demand attention.
+                </p>
+
+                <div class="flex flex-col sm:flex-row gap-4">
+                    <a href="app.html"
+                        class="px-8 py-4 bg-white text-black font-bold rounded-xl hover:bg-gray-200 transition flex items-center justify-center gap-2">
+                        Build My Resume <i class="fa-solid fa-arrow-right"></i>
+                    </a>
+                    <a href="#demo"
+                        class="px-8 py-4 glass text-white font-bold rounded-xl transition flex items-center justify-center gap-2">
+                        <i class="fa-solid fa-play text-accent-500"></i> Watch Demo
+                    </a>
+                </div>
+
+                <div class="mt-12 flex items-center gap-4 text-sm text-gray-500">
+                    <div class="flex -space-x-2">
+                        <img src="https://i.pravatar.cc/100?img=1"
+                            class="w-8 h-8 rounded-full border-2 border-space-950">
+                        <img src="https://i.pravatar.cc/100?img=2"
+                            class="w-8 h-8 rounded-full border-2 border-space-950">
+                        <img src="https://i.pravatar.cc/100?img=3"
+                            class="w-8 h-8 rounded-full border-2 border-space-950">
+                    </div>
+                    <p>Joined by 10,000+ professionals</p>
+                </div>
+            </div>
+
+            <div class="relative" data-aos="fade-left" data-aos-duration="1000" data-aos-delay="200">
+                <div
+                    class="absolute -inset-4 bg-gradient-to-r from-accent-500 to-purple-600 rounded-2xl blur-2xl opacity-30 animate-pulse">
+                </div>
+                <div
+                    class="relative bg-space-900 border border-gray-800 rounded-2xl p-2 shadow-2xl transform rotate-2 hover:rotate-0 transition duration-500">
+                    <img src="https://cdn.dribbble.com/users/1615584/screenshots/15963368/media/f62569927560308eb355041a8ef8a63a.jpg?resize=1600x1200&vertical=center"
+                        class="rounded-xl w-full object-cover opacity-90 hover:opacity-100 transition">
+
+                    <div class="absolute -bottom-6 -left-6 bg-space-800 border border-gray-700 p-4 rounded-xl shadow-xl flex items-center gap-3 animate-bounce"
+                        style="animation-duration: 3s;">
+                        <div
+                            class="w-10 h-10 bg-green-500/20 rounded-full flex items-center justify-center text-green-400">
+                            <i class="fa-solid fa-check"></i>
+                        </div>
+                        <div>
+                            <p class="text-xs text-gray-400 font-bold uppercase">ATS Score</p>
+                            <p class="text-white font-bold text-lg">98/100</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- PROBLEM SECTION -->
+    <section class="py-24 bg-space-950 border-t border-white/5">
+        <div class="max-w-7xl mx-auto px-6 text-center">
+            <p class="text-accent-500 font-bold text-sm tracking-widest uppercase mb-4">The Problem</p>
+            <h2 class="font-display font-bold text-3xl md:text-4xl text-white mb-12">Why you're not getting callbacks
+            </h2>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <div class="p-6 rounded-2xl bg-red-500/5 border border-red-500/10">
+                    <div
+                        class="w-12 h-12 mx-auto bg-red-500/10 rounded-full flex items-center justify-center text-red-500 mb-4">
+                        <i class="fa-solid fa-robot"></i></div>
+                    <h3 class="font-bold text-white text-lg mb-2">ATS Rejection</h3>
+                    <p class="text-gray-400 text-sm">75% of resumes are rejected by bots before a human ever sees them
+                        because of bad formatting.</p>
+                </div>
+                <div class="p-6 rounded-2xl bg-orange-500/5 border border-orange-500/10">
+                    <div
+                        class="w-12 h-12 mx-auto bg-orange-500/10 rounded-full flex items-center justify-center text-orange-500 mb-4">
+                        <i class="fa-solid fa-pen-nib"></i></div>
+                    <h3 class="font-bold text-white text-lg mb-2">Weak Writing</h3>
+                    <p class="text-gray-400 text-sm">Generic bullet points like "Responsible for sales" don't sell your
+                        impact or potential.</p>
+                </div>
+                <div class="p-6 rounded-2xl bg-yellow-500/5 border border-yellow-500/10">
+                    <div
+                        class="w-12 h-12 mx-auto bg-yellow-500/10 rounded-full flex items-center justify-center text-yellow-500 mb-4">
+                        <i class="fa-solid fa-clock"></i></div>
+                    <h3 class="font-bold text-white text-lg mb-2">Wasted Time</h3>
+                    <p class="text-gray-400 text-sm">Spending hours tweaking margins in Word instead of preparing for
+                        interviews.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- BENTO GRID FEATURES -->
+    <section id="features" class="py-32 bg-space-900 relative">
+        <div class="max-w-7xl mx-auto px-6">
+            <div class="text-center mb-20" data-aos="fade-up">
+                <h2 class="font-display font-bold text-4xl mb-4">Everything you need to win.</h2>
+                <p class="text-gray-400">Powerful tools wrapped in a beautiful interface.</p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 md:grid-rows-2 gap-6 h-auto md:h-[600px]">
+                <div class="md:col-span-2 md:row-span-2 glass rounded-3xl p-8 relative overflow-hidden group"
+                    data-aos="fade-up">
+                    <div
+                        class="absolute top-0 right-0 w-64 h-64 bg-accent-600/10 rounded-full blur-[80px] group-hover:bg-accent-600/20 transition">
+                    </div>
+                    <div class="relative z-10">
+                        <div
+                            class="w-12 h-12 bg-space-800 rounded-xl flex items-center justify-center text-white mb-6 border border-gray-700">
+                            <i class="fa-solid fa-wand-magic-sparkles"></i>
+                        </div>
+                        <h3 class="text-2xl font-bold text-white mb-2">AI Writer</h3>
+                        <p class="text-gray-400 max-w-md mb-8">Just type "I fixed the login bug" and our AI transforms
+                            it into "Engineered a robust authentication patch, reducing failed logins by 45%."</p>
+                        <div
+                            class="bg-space-950 border border-gray-800 rounded-xl p-4 max-w-md transform group-hover:translate-x-2 transition">
+                            <div class="flex gap-3">
+                                <div class="w-1 bg-accent-500 rounded-full"></div>
+                                <p class="text-sm text-gray-300">Spearheaded the implementation of OAuth 2.0, enhancing
+                                    security protocols...</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="glass rounded-3xl p-8 relative overflow-hidden group" data-aos="fade-up"
+                    data-aos-delay="100">
+                    <div
+                        class="w-12 h-12 bg-space-800 rounded-xl flex items-center justify-center text-white mb-6 border border-gray-700">
+                        <i class="fa-solid fa-file-pdf"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-white mb-2">LaTeX Rendering</h3>
+                    <p class="text-gray-400 text-sm">Perfect typography, every time. We compile real LaTeX in the cloud.
+                    </p>
+                </div>
+                <div class="glass rounded-3xl p-8 relative overflow-hidden group" data-aos="fade-up"
+                    data-aos-delay="200">
+                    <div class="flex items-center justify-between mb-4">
+                        <div
+                            class="w-12 h-12 bg-space-800 rounded-xl flex items-center justify-center text-white border border-gray-700">
+                            <i class="fa-solid fa-bullseye"></i>
+                        </div>
+                        <span class="bg-green-500/10 text-green-400 text-xs font-bold px-2 py-1 rounded">LIVE</span>
+                    </div>
+                    <h3 class="text-xl font-bold text-white mb-2">ATS Scanner</h3>
+                    <p class="text-gray-400 text-sm">Upload your resume + job description to see your match score
+                        instantly.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- HOW IT WORKS -->
+    <section id="how-it-works" class="py-24 bg-space-950 relative">
+        <div class="max-w-7xl mx-auto px-6">
+            <div class="text-center mb-16">
+                <h2 class="font-display font-bold text-3xl md:text-4xl mb-4">From Chaos to Hired in 3 Steps</h2>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-12">
+                <div class="text-center group" data-aos="fade-up" data-aos-delay="0">
+                    <div
+                        class="w-16 h-16 mx-auto bg-space-800 rounded-2xl border border-gray-700 flex items-center justify-center text-2xl font-bold text-white mb-6 group-hover:border-accent-500 group-hover:scale-110 transition shadow-lg shadow-black/50">
+                        1</div>
+                    <h3 class="font-bold text-xl text-white mb-3">Brain Dump</h3>
+                    <p class="text-gray-400 text-sm leading-relaxed">Paste your messy notes, old resume, or LinkedIn
+                        bio. Don't worry about grammar.</p>
+                </div>
+                <div class="text-center group" data-aos="fade-up" data-aos-delay="100">
+                    <div
+                        class="w-16 h-16 mx-auto bg-space-800 rounded-2xl border border-gray-700 flex items-center justify-center text-2xl font-bold text-white mb-6 group-hover:border-accent-500 group-hover:scale-110 transition shadow-lg shadow-black/50">
+                        2</div>
+                    <h3 class="font-bold text-xl text-white mb-3">AI Transformation</h3>
+                    <p class="text-gray-400 text-sm leading-relaxed">Our engine rewrites your experience using the
+                        <strong>STAR method</strong> and quantifies your impact.</p>
+                </div>
+                <div class="text-center group" data-aos="fade-up" data-aos-delay="200">
+                    <div
+                        class="w-16 h-16 mx-auto bg-space-800 rounded-2xl border border-gray-700 flex items-center justify-center text-2xl font-bold text-white mb-6 group-hover:border-accent-500 group-hover:scale-110 transition shadow-lg shadow-black/50">
+                        3</div>
+                    <h3 class="font-bold text-xl text-white mb-3">Get Hired</h3>
+                    <p class="text-gray-400 text-sm leading-relaxed">Download a perfectly formatted PDF that passes 100%
+                        of ATS scanners.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- TESTIMONIALS -->
+    <section class="py-24 bg-space-900 border-y border-white/5">
+        <div class="max-w-7xl mx-auto px-6">
+            <h2 class="font-display font-bold text-3xl text-center mb-12">Loved by Professionals</h2>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <div class="glass p-8 rounded-2xl">
+                    <div class="flex gap-1 text-yellow-500 mb-4"><i class="fa-solid fa-star"></i><i
+                            class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i
+                            class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i></div>
+                    <p class="text-gray-300 mb-6 leading-relaxed">"I applied to 50 jobs with my old resume and got 0
+                        calls. Used RoverAI, applied to 5, and got 2 interviews. The AI rewriting is magic."</p>
+                    <div class="flex items-center gap-3">
+                        <div class="w-10 h-10 bg-gray-700 rounded-full"></div>
+                        <div>
+                            <p class="font-bold text-white text-sm">Sarah Jenkins</p>
+                            <p class="text-xs text-gray-500">Product Manager @ TechCorp</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="glass p-8 rounded-2xl">
+                    <div class="flex gap-1 text-yellow-500 mb-4"><i class="fa-solid fa-star"></i><i
+                            class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i
+                            class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i></div>
+                    <p class="text-gray-300 mb-6 leading-relaxed">"The LaTeX templates are gorgeous. It looks like I
+                        paid a designer $500, but it took me 5 minutes."</p>
+                    <div class="flex items-center gap-3">
+                        <div class="w-10 h-10 bg-gray-700 rounded-full"></div>
+                        <div>
+                            <p class="font-bold text-white text-sm">David Chen</p>
+                            <p class="text-xs text-gray-500">Software Engineer</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="glass p-8 rounded-2xl">
+                    <div class="flex gap-1 text-yellow-500 mb-4"><i class="fa-solid fa-star"></i><i
+                            class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i
+                            class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i></div>
+                    <p class="text-gray-300 mb-6 leading-relaxed">"Finally, a resume builder that doesn't try to charge
+                        me to download the PDF at the last second. Worth every penny for the Pro features."</p>
+                    <div class="flex items-center gap-3">
+                        <div class="w-10 h-10 bg-gray-700 rounded-full"></div>
+                        <div>
+                            <p class="font-bold text-white text-sm">Emily Ross</p>
+                            <p class="text-xs text-gray-500">Marketing Director</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- FAQ -->
+    <section class="py-24 bg-space-950">
+        <div class="max-w-3xl mx-auto px-6" x-data="{ active: null }">
+            <h2 class="font-display font-bold text-3xl text-center mb-12">Frequently Asked Questions</h2>
+
+            <div class="space-y-4">
+                <div class="glass rounded-xl overflow-hidden">
+                    <button @click="active = active === 1 ? null : 1"
+                        class="w-full p-6 flex justify-between items-center text-left">
+                        <span class="font-bold text-white">Is it really ATS friendly?</span>
+                        <i class="fa-solid fa-chevron-down transition" :class="active === 1 ? 'rotate-180' : ''"></i>
+                    </button>
+                    <div class="accordion-content px-6 pb-6 text-gray-400 text-sm"
+                        :class="active === 1 ? 'active' : ''">
+                        Yes. We use LaTeX, which generates clean, machine-readable code that parses perfectly in 99.9%
+                        of Applicant Tracking Systems.
+                    </div>
+                </div>
+                <div class="glass rounded-xl overflow-hidden">
+                    <button @click="active = active === 2 ? null : 2"
+                        class="w-full p-6 flex justify-between items-center text-left">
+                        <span class="font-bold text-white">Can I cancel anytime?</span>
+                        <i class="fa-solid fa-chevron-down transition" :class="active === 2 ? 'rotate-180' : ''"></i>
+                    </button>
+                    <div class="accordion-content px-6 pb-6 text-gray-400 text-sm"
+                        :class="active === 2 ? 'active' : ''">
+                        Absolutely. You can cancel your subscription instantly from your dashboard. You keep access
+                        until the end of your billing period.
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA -->
+    <section class="py-24 relative overflow-hidden">
+        <div class="absolute inset-0 bg-accent-600/10 z-0"></div>
+        <div class="max-w-4xl mx-auto px-6 relative z-10 text-center">
+            <h2 class="font-display font-black text-4xl md:text-5xl text-white mb-6">Ready to land your dream job?</h2>
+            <p class="text-gray-300 mb-8 text-lg">Join thousands of professionals who have upgraded their career with
+                RoverAI.</p>
+            <a href="app.html"
+                class="inline-block px-10 py-5 bg-white text-black font-bold text-lg rounded-full hover:bg-gray-100 transition shadow-2xl hover:scale-105 transform">
+                Build Your Resume Now
+            </a>
+            <p class="mt-4 text-sm text-gray-500">No credit card required for free tier.</p>
+        </div>
+    </section>
+
+    <!-- MEGA FOOTER -->
+    <footer class="bg-space-900 border-t border-white/5 pt-20 pb-10">
+        <div class="max-w-7xl mx-auto px-6">
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 mb-16">
+                <!-- Brand -->
+                <div>
+                    <a href="/" class="flex items-center gap-2 mb-6">
+                        <div class="w-8 h-8 bg-accent-600 rounded-lg flex items-center justify-center text-white">
+                            <i class="fa-solid fa-rocket"></i>
+                        </div>
+                        <span class="font-display font-bold text-xl tracking-wide text-white">Rover<span
+                                class="text-accent-500">AI</span></span>
+                    </a>
+                    <p class="text-gray-500 text-sm leading-relaxed mb-6">
+                        The world's most advanced AI resume builder. Crafted for ambitious professionals who value their
+                        career.
+                    </p>
+                    <div class="flex gap-4 text-gray-400">
+                        <a href="#"
+                            class="w-8 h-8 rounded-full bg-space-800 flex items-center justify-center hover:bg-accent-500 hover:text-white transition"><i
+                                class="fa-brands fa-twitter"></i></a>
+                        <a href="#"
+                            class="w-8 h-8 rounded-full bg-space-800 flex items-center justify-center hover:bg-accent-500 hover:text-white transition"><i
+                                class="fa-brands fa-github"></i></a>
+                        <a href="#"
+                            class="w-8 h-8 rounded-full bg-space-800 flex items-center justify-center hover:bg-accent-500 hover:text-white transition"><i
+                                class="fa-brands fa-linkedin"></i></a>
+                    </div>
+                </div>
+
+                <!-- Product -->
+                <div>
+                    <h4 class="font-bold text-white mb-6">Product</h4>
+                    <ul class="space-y-4 text-sm text-gray-400">
+                        <li><a href="app.html" class="hover:text-accent-500 transition">Resume Builder</a></li>
+                        <li><a href="#" class="hover:text-accent-500 transition">Cover Letter Generator</a></li>
+                        <li><a href="#" class="hover:text-accent-500 transition">ATS Scanner</a></li>
+                        <li><a href="pricing.html" class="hover:text-accent-500 transition">Pricing</a></li>
+                        <li><a href="#" class="hover:text-accent-500 transition">Templates</a></li>
+                    </ul>
+                </div>
+
+                <!-- Resources -->
+                <div>
+                    <h4 class="font-bold text-white mb-6">Resources</h4>
+                    <ul class="space-y-4 text-sm text-gray-400">
+                        <li><a href="#" class="hover:text-accent-500 transition">Resume Examples</a></li>
+                        <li><a href="#" class="hover:text-accent-500 transition">Career Blog</a></li>
+                        <li><a href="#" class="hover:text-accent-500 transition">Interview Prep</a></li>
+                        <li><a href="#" class="hover:text-accent-500 transition">Salary Guide</a></li>
+                        <li><a href="#" class="hover:text-accent-500 transition">Help Center</a></li>
+                    </ul>
+                </div>
+
+                <!-- Legal -->
+                <div>
+                    <h4 class="font-bold text-white mb-6">Legal</h4>
+                    <ul class="space-y-4 text-sm text-gray-400">
+                        <li><a href="#" class="hover:text-accent-500 transition">Privacy Policy</a></li>
+                        <li><a href="#" class="hover:text-accent-500 transition">Terms of Service</a></li>
+                        <li><a href="#" class="hover:text-accent-500 transition">Cookie Policy</a></li>
+                        <li><a href="#" class="hover:text-accent-500 transition">Security</a></li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="border-t border-white/5 pt-8 flex flex-col md:flex-row justify-between items-center gap-4">
+                <p class="text-gray-600 text-xs">&copy; 2024 RoverAI Inc. All rights reserved.</p>
+                <div class="flex items-center gap-2 text-xs text-gray-600">
+                    <span class="w-2 h-2 rounded-full bg-green-500"></span>
+                    <span>All Systems Operational</span>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        AOS.init({
+            once: true,
+            offset: 50,
+            duration: 800,
+        });
+    </script>
+</body>
+
+</html>

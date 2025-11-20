@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - RoverAI</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&family=Inter:wght@300;400;600&display=swap"
+        rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: { sans: ['Inter', 'sans-serif'], display: ['Outfit', 'sans-serif'] },
+                    colors: {
+                        space: { 950: '#05050a', 900: '#0b0c15', 800: '#151725' },
+                        accent: { 500: '#6366f1', 600: '#4f46e5' }
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+
+<body class="bg-space-950 text-white h-screen flex items-center justify-center relative overflow-hidden"
+    x-data="auth()">
+
+    <!-- Background Effects -->
+    <div class="absolute top-0 left-0 w-full h-full overflow-hidden z-0 pointer-events-none">
+        <div class="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] bg-purple-600/20 rounded-full blur-[100px]"></div>
+        <div class="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] bg-accent-600/20 rounded-full blur-[100px]">
+        </div>
+    </div>
+
+    <div class="relative z-10 w-full max-w-md p-8">
+        <div class="text-center mb-8">
+            <a href="/" class="inline-block font-display font-bold text-2xl tracking-wide mb-2">Rover<span
+                    class="text-accent-500">AI</span></a>
+            <h1 class="text-xl text-gray-300">Welcome Back</h1>
+        </div>
+
+        <div class="bg-space-900/50 backdrop-blur-xl border border-white/10 rounded-2xl p-8 shadow-2xl">
+            <!-- Tabs -->
+            <div class="flex border-b border-white/10 mb-6">
+                <button @click="mode = 'login'"
+                    :class="mode === 'login' ? 'text-white border-accent-500' : 'text-gray-500 border-transparent'"
+                    class="flex-1 pb-3 text-sm font-bold border-b-2 transition">Sign In</button>
+                <button @click="mode = 'signup'"
+                    :class="mode === 'signup' ? 'text-white border-accent-500' : 'text-gray-500 border-transparent'"
+                    class="flex-1 pb-3 text-sm font-bold border-b-2 transition">Create Account</button>
+            </div>
+
+            <form @submit.prevent="handleSubmit" class="space-y-4">
+                <div>
+                    <label class="block text-xs text-gray-400 uppercase font-bold mb-1">Email Address</label>
+                    <input type="email" x-model="email" required
+                        class="w-full bg-space-950 border border-gray-700 rounded-lg p-3 text-white focus:border-accent-500 outline-none transition">
+                </div>
+
+                <div>
+                    <label class="block text-xs text-gray-400 uppercase font-bold mb-1">Password</label>
+                    <input type="password" x-model="password" required
+                        class="w-full bg-space-950 border border-gray-700 rounded-lg p-3 text-white focus:border-accent-500 outline-none transition">
+                </div>
+
+                <button type="submit" :disabled="loading"
+                    class="w-full bg-accent-600 hover:bg-accent-500 text-white font-bold py-3 rounded-lg transition shadow-lg shadow-accent-500/25 flex justify-center items-center">
+                    <span x-show="!loading" x-text="mode === 'login' ? 'Sign In' : 'Create Account'"></span>
+                    <span x-show="loading"
+                        class="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin"></span>
+                </button>
+            </form>
+
+            <p x-show="message" x-text="message" :class="isError ? 'text-red-400' : 'text-green-400'"
+                class="text-xs text-center mt-4"></p>
+
+            <div class="mt-6 pt-6 border-t border-white/5 text-center">
+                <p class="text-xs text-gray-500">By continuing, you agree to our Terms & Privacy Policy.</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function auth() {
+            return {
+                mode: 'login',
+                email: '',
+                password: '',
+                loading: false,
+                message: '',
+                isError: false,
+                supabase: null,
+
+                init() {
+                    const SUPABASE_URL = 'https://bemxgkzdfqqwlxfsawlm.supabase.co';
+                    const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJlbXhna3pkZnFxd2x4ZnNhd2xtIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjM1NzYwMTgsImV4cCI6MjA3OTE1MjAxOH0.AvIux8Yv5WtZw7icPwgoQr1OavcFqpWDO4OAsvwmzj4';
+                    this.supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+                },
+
+                async handleSubmit() {
+                    this.loading = true;
+                    this.message = '';
+                    this.isError = false;
+
+                    try {
+                        let result;
+                        if (this.mode === 'login') {
+                            result = await this.supabase.auth.signInWithPassword({
+                                email: this.email,
+                                password: this.password
+                            });
+                        } else {
+                            result = await this.supabase.auth.signUp({
+                                email: this.email,
+                                password: this.password
+                            });
+                        }
+
+                        if (result.error) throw result.error;
+
+                        if (this.mode === 'signup' && !result.data.session) {
+                            this.message = "Check your email to confirm your account!";
+                            this.isError = false;
+                        } else {
+                            // Success - Redirect to App
+                            window.location.href = '/app.html';
+                        }
+
+                    } catch (e) {
+                        this.message = e.message;
+                        this.isError = true;
+                    } finally {
+                        this.loading = false;
+                    }
+                }
+            }
+        }
+    </script>
+</body>
+
+</html>

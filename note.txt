@@ -1,0 +1,7 @@
+gemini-2.5-flash
+
+I don't have any expeirence, I'm looking for a internship, from Delhi, I made a few apps, a CRUD App called Grateful that basically is a Gratitude Journal App, local storage using hive and workmanager to send reminder to journal
+
+cryptowatch - top 100 live see price for crypto using the CoinWatch API, shimmer package, REST API
+
+Quizzy - An AI generated quiz maker, enter a topic, get AI quiz from Gemini API
