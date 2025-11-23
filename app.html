@@ -96,6 +96,11 @@
                 class="flex items-center gap-3 px-4 py-3 rounded-xl border transition font-medium">
                 <i class="fa-solid fa-layer-group w-5"></i> Templates
             </a>
+            <a href="#" @click.prevent="currentTab = 'cover-letter'"
+                :class="currentTab === 'cover-letter' ? 'bg-accent-500/10 text-accent-400 border-accent-500/20' : 'text-gray-400 hover:bg-white/5 hover:text-white border-transparent'"
+                class="flex items-center gap-3 px-4 py-3 rounded-xl border transition font-medium">
+                <i class="fa-solid fa-envelope-open-text w-5"></i> Cover Letter
+            </a>
         </nav>
 
         <div class="p-4 border-t border-white/5">
@@ -134,8 +139,6 @@
             class="h-16 border-b border-white/5 flex items-center justify-between px-8 bg-space-950/50 backdrop-blur-sm z-10">
             <h1 class="font-display font-bold text-xl text-white" x-text="tabTitle"></h1>
             <div class="flex items-center gap-4">
-                <input type="password" x-model="apiKey" placeholder="Gemini API Key"
-                    class="bg-space-800 border border-white/10 rounded-lg px-3 py-1 text-sm text-white focus:outline-none focus:border-accent-500">
                 <button
                     class="w-8 h-8 rounded-full bg-space-800 flex items-center justify-center text-gray-400 hover:text-white transition"><i
                         class="fa-regular fa-bell"></i></button>
@@ -306,6 +309,39 @@
 
         </div>
 
+        <!-- COVER LETTER TAB -->
+        <div x-show="currentTab === 'cover-letter'" class="max-w-4xl mx-auto relative z-10">
+            <div class="glass p-8 rounded-2xl mb-8">
+                <h2 class="text-2xl font-display font-bold text-white mb-6">AI Cover Letter Generator</h2>
+                <p class="text-gray-400 text-sm mb-6">Paste the job description below, and we'll write a tailored cover
+                    letter based on your profile.</p>
+
+                <div class="mb-6">
+                    <label class="block text-xs font-medium text-gray-400 mb-1">Job Description</label>
+                    <textarea x-model="clJobDesc" rows="6"
+                        class="w-full bg-space-950 border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-accent-500 transition"
+                        placeholder="Paste the full job description here..."></textarea>
+                </div>
+
+                <button @click="generateCoverLetter()" :disabled="clGenerating || !clJobDesc"
+                    class="w-full bg-accent-600 hover:bg-accent-500 text-white font-bold py-4 px-8 rounded-xl shadow-lg shadow-accent-500/25 transition flex items-center justify-center gap-3 disabled:opacity-50 disabled:cursor-not-allowed">
+                    <i class="fa-solid fa-pen-nib" :class="{'fa-spin': clGenerating}"></i>
+                    <span x-text="clGenerating ? 'Writing Letter...' : 'Generate Cover Letter'"></span>
+                </button>
+            </div>
+
+            <div x-show="clResult" class="glass p-8 rounded-2xl mb-8">
+                <h3 class="text-xl font-bold text-white mb-4">Your Cover Letter</h3>
+                <textarea x-model="clResult" rows="15"
+                    class="w-full bg-space-950 border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-accent-500 transition mb-4"></textarea>
+                <div class="flex justify-end gap-4">
+                    <button @click="copyToClipboard(clResult)"
+                        class="text-gray-400 hover:text-white transition font-medium text-sm"><i
+                            class="fa-regular fa-copy"></i> Copy Text</button>
+                </div>
+            </div>
+        </div>
+
         <!-- PDF MODAL -->
         <div x-show="showPdfModal" class="absolute inset-0 z-50 bg-space-950/90 backdrop-blur-md flex flex-col"
             style="display: none;">
@@ -330,7 +366,6 @@
                 // State
                 currentTab: 'builder',
                 user: null,
-                apiKey: '',
 
                 // Data
                 formData: {
@@ -352,11 +387,17 @@
                 atsChecking: false,
                 atsResult: null,
 
+                // Cover Letter State
+                clJobDesc: '',
+                clGenerating: false,
+                clResult: '',
+
                 // Computed
                 get tabTitle() {
                     if (this.currentTab === 'builder') return 'Resume Builder';
                     if (this.currentTab === 'templates') return 'Template Gallery';
                     if (this.currentTab === 'ats') return 'ATS Scanner';
+                    if (this.currentTab === 'cover-letter') return 'Cover Letter';
                     return 'DocuCV';
                 },
 
@@ -408,14 +449,11 @@
                 },
 
                 async generateResume() {
-                    if (!this.apiKey) { alert("Please enter your Gemini API Key in the header."); return; }
-
                     this.generating = true;
                     try {
                         const payload = {
                             userData: { ...this.formData, profileImage: this.profileImage },
-                            templatePath: this.selectedTemplate,
-                            apiKey: this.apiKey
+                            templatePath: this.selectedTemplate
                         };
 
                         const res = await fetch('/api/generate', {
@@ -438,13 +476,10 @@
                 },
 
                 async runAtsCheck() {
-                    if (!this.apiKey) { alert("Please enter your Gemini API Key."); return; }
-
                     this.atsChecking = true;
                     const formData = new FormData();
                     formData.append('resume', this.atsFile);
                     formData.append('jobDescription', this.atsJobDesc);
-                    formData.append('apiKey', this.apiKey);
 
                     try {
                         const res = await fetch('/api/ats-check', { method: 'POST', body: formData });
@@ -455,6 +490,34 @@
                     } finally {
                         this.atsChecking = false;
                     }
+                },
+
+                async generateCoverLetter() {
+                    this.clGenerating = true;
+                    try {
+                        const res = await fetch('/api/cover-letter', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({
+                                userData: this.formData,
+                                jobDescription: this.clJobDesc
+                            })
+                        });
+
+                        if (!res.ok) throw new Error((await res.json()).error);
+                        const data = await res.json();
+                        this.clResult = data.coverLetter;
+
+                    } catch (e) {
+                        alert("Cover Letter Generation Failed: " + e.message);
+                    } finally {
+                        this.clGenerating = false;
+                    }
+                },
+
+                copyToClipboard(text) {
+                    navigator.clipboard.writeText(text);
+                    alert("Copied to clipboard!");
                 }
             }
         }

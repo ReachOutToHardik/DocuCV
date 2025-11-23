@@ -1,0 +1,3 @@
+User-agent: *
+Allow: /
+Sitemap: https://docucv.com/sitemap.xml

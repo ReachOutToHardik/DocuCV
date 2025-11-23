@@ -20,7 +20,7 @@ if (supabaseUrl && supabaseKey && supabaseUrl !== 'https://your-project-url.supa
 
 
 const app = express();
-const PORT = 3000;
+const PORT = process.env.PORT || 3000;
 
 // Enable CORS and large JSON bodies for images
 app.use(cors());
@@ -80,9 +80,10 @@ app.post('/api/generate', async (req, res) => {
     console.log("Incoming Generation Request...");
 
     try {
-        const { userData, templatePath, apiKey } = req.body;
+        const { userData, templatePath } = req.body;
+        const apiKey = process.env.GEMINI_API_KEY;
 
-        if (!apiKey) return res.status(400).json({ error: "API Key is missing." });
+        if (!apiKey) return res.status(500).json({ error: "Server Configuration Error: Gemini API Key missing." });
         if (!templatePath) return res.status(400).json({ error: "No template selected." });
 
         const hasImage = !!userData.profileImage;
@@ -218,10 +219,11 @@ app.post('/api/ats-check', upload.single('resume'), async (req, res) => {
     console.log("Incoming ATS Check Request...");
 
     try {
-        const { jobDescription, apiKey } = req.body;
+        const { jobDescription } = req.body;
         const file = req.file;
+        const apiKey = process.env.GEMINI_API_KEY;
 
-        if (!apiKey) return res.status(400).json({ error: "API Key is missing." });
+        if (!apiKey) return res.status(500).json({ error: "Server Configuration Error: Gemini API Key missing." });
         if (!file) return res.status(400).json({ error: "No resume file uploaded." });
 
         // Initialize Gemini SDK
@@ -292,6 +294,50 @@ app.post('/api/ats-check', upload.single('resume'), async (req, res) => {
     } catch (error) {
         console.error("ATS CHECK ERROR:", error);
         res.status(500).json({ error: "ATS Analysis failed. Check backend console." });
+    }
+});
+
+// --- ENDPOINT: COVER LETTER GENERATOR ---
+app.post('/api/cover-letter', async (req, res) => {
+    console.log("------------------------------------------------");
+    console.log("Incoming Cover Letter Request...");
+
+    try {
+        const { userData, jobDescription } = req.body;
+        const apiKey = process.env.GEMINI_API_KEY;
+
+        if (!apiKey) return res.status(500).json({ error: "Server Configuration Error: Gemini API Key missing." });
+        if (!jobDescription) return res.status(400).json({ error: "Job Description is required." });
+
+        // Construct Resume Text from User Data
+        let resumeText = `
+        Name: ${userData.name}
+        Email: ${userData.email}
+        Role: ${userData.targetRole}
+        Experience/Skills: ${userData.rawInfo}
+        `;
+
+        // Load Prompt
+        const promptTemplate = fs.readFileSync(path.join(__dirname, 'prompts', 'cover_letter.txt'), 'utf-8');
+        const prompt = promptTemplate
+            .replace('{{resumeText}}', resumeText)
+            .replace('{{jobDescription}}', jobDescription);
+
+        // Call Gemini
+        console.log("Sending to Gemini...");
+        const genAI = new GoogleGenerativeAI(apiKey);
+        const model = genAI.getGenerativeModel({ model: "gemini-2.5-flash" });
+
+        const result = await model.generateContent(prompt);
+        const response = await result.response;
+        const coverLetterText = response.text();
+
+        console.log("Cover Letter Generated.");
+        res.json({ coverLetter: coverLetterText });
+
+    } catch (error) {
+        console.error("COVER LETTER ERROR:", error);
+        res.status(500).json({ error: "Generation failed: " + error.message });
     }
 });
 

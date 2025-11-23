@@ -5,7 +5,7 @@ JOB DESCRIPTION:
 
 TASK:
 Analyze the resume (provided as file or text) against the job description with extreme scrutiny.
-Do not be nice. Be objective, critical, and detailed.
+Do not be nice. Be objective, critical, and detailed. but the things are good then tell it also.
 
 Your goal is to find EVERY reason why this resume might be rejected by an algorithm or a hiring manager.
 

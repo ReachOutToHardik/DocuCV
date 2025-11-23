@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Interview Prep - DocuCV</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;700;900&family=Inter:wght@300;400;500;600&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: { sans: ['Inter', 'sans-serif'], display: ['Outfit', 'sans-serif'] },
+                    colors: {
+                        space: { 950: '#030305', 900: '#0A0A0F', 800: '#12121A', 700: '#1C1C26' },
+                        accent: { 400: '#818cf8', 500: '#6366f1', 600: '#4f46e5' }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            background-color: #030305;
+            color: #e2e8f0;
+        }
+    </style>
+</head>
+
+<body class="py-12 px-6 md:px-12 max-w-4xl mx-auto">
+    <header class="mb-12 text-center">
+        <a href="/" class="inline-block font-display font-bold text-2xl tracking-wide text-white mb-4">Docu<span
+                class="text-accent-500">CV</span></a>
+        <h1 class="text-4xl font-display font-bold text-white">Interview Preparation</h1>
+        <p class="text-gray-400 mt-2">Master your next interview with confidence</p>
+    </header>
+
+    <div class="space-y-8 text-gray-300 leading-relaxed">
+        <section>
+            <h2 class="text-2xl font-bold text-white mb-4">Common Interview Questions</h2>
+
+            <div class="space-y-6">
+                <div class="bg-space-800 p-6 rounded-xl border border-white/10">
+                    <h3 class="text-lg font-bold text-accent-400 mb-2">Tell me about yourself</h3>
+                    <p class="text-gray-400">Craft a compelling 2-minute pitch that highlights your background, key
+                        achievements, and why you're interested in this role.</p>
+                </div>
+
+                <div class="bg-space-800 p-6 rounded-xl border border-white/10">
+                    <h3 class="text-lg font-bold text-accent-400 mb-2">What are your strengths and weaknesses?</h3>
+                    <p class="text-gray-400">Choose strengths relevant to the job and frame weaknesses as areas you're
+                        actively improving.</p>
+                </div>
+
+                <div class="bg-space-800 p-6 rounded-xl border border-white/10">
+                    <h3 class="text-lg font-bold text-accent-400 mb-2">Why do you want to work here?</h3>
+                    <p class="text-gray-400">Research the company thoroughly and connect their mission and values to
+                        your career goals.</p>
+                </div>
+
+                <div class="bg-space-800 p-6 rounded-xl border border-white/10">
+                    <h3 class="text-lg font-bold text-accent-400 mb-2">Describe a challenging situation</h3>
+                    <p class="text-gray-400">Use the STAR method (Situation, Task, Action, Result) to structure your
+                        response with specific examples.</p>
+                </div>
+            </div>
+        </section>
+
+        <section class="mt-12">
+            <h2 class="text-2xl font-bold text-white mb-4">Interview Tips</h2>
+            <ul class="list-disc pl-6 space-y-2 text-gray-400">
+                <li>Research the company and role thoroughly before the interview</li>
+                <li>Prepare specific examples of your achievements using the STAR method</li>
+                <li>Practice your answers out loud, but don't memorize them</li>
+                <li>Prepare thoughtful questions to ask the interviewer</li>
+                <li>Dress appropriately for the company culture</li>
+                <li>Arrive 10-15 minutes early (or log in early for virtual interviews)</li>
+                <li>Send a thank-you email within 24 hours</li>
+            </ul>
+        </section>
+    </div>
+
+    <div class="mt-12 text-center">
+        <a href="app.html"
+            class="inline-block px-8 py-3 bg-accent-600 text-white font-bold rounded-xl hover:bg-accent-500 transition">
+            Build Your Resume
+        </a>
+    </div>
+</body>
+
+</html>

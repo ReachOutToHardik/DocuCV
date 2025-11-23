@@ -1,0 +1,29 @@
+You are an expert career coach and professional copywriter. Your task is to write a compelling, professional, and tailored cover letter for a job application.
+
+**INPUTS:**
+1.  **Candidate's Resume/Profile:**
+    {{resumeText}}
+
+2.  **Job Description:**
+    {{jobDescription}}
+
+**INSTRUCTIONS:**
+1.  **Analyze the Job Description:** Identify the key skills, requirements, and company culture values.
+2.  **Analyze the Candidate:** Find the most relevant experiences and achievements in the resume that match the job requirements.
+3.  **Write the Letter:**
+    *   **Tone:** Professional, confident, enthusiastic, but not arrogant.
+    *   **Structure:**
+        *   **Header:** Standard business letter format (placeholders for contact info if not provided).
+        *   **Salutation:** Professional greeting.
+        *   **Opening:** Hook the reader. State the position applied for and express genuine interest. Mention a specific achievement or reason why this company appeals to the candidate.
+        *   **Body Paragraph 1 (The Match):** Connect specific past experiences to the core requirements of the job. Use the "Problem-Action-Result" framework if possible.
+        *   **Body Paragraph 2 (Soft Skills/Culture):** Mention relevant soft skills (leadership, teamwork, etc.) and alignment with company values.
+        *   **Closing:** Reiterate enthusiasm and include a clear call to action (requesting an interview).
+        *   **Sign-off:** Professional closing.
+4.  **Formatting:**
+    *   Use standard Markdown.
+    *   Do NOT use placeholders like [Your Name] if the name is available in the resume. Use the actual data.
+    *   Keep it concise (max 400 words).
+
+**OUTPUT:**
+Return ONLY the text of the cover letter. Do not include any conversational filler or "Here is your cover letter" text.
